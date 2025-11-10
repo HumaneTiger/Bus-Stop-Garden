@@ -1,0 +1,85 @@
+#clouds {
+  animation: moving-cloud 50s linear infinite;
+  position: absolute;
+  margin-top: -180px;
+  top: 50%;
+  left: 0;
+  width: calc(1536px * 2);
+  height: 300px;
+  background: url(../img/scene/clouds.png) 0 0 repeat-x;
+  transform-origin: top left;
+  transform: translateY(-50%);
+}
+
+@keyframes moving-cloud {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -1536px 0;
+  }
+}
+
+#bus-stop {
+  position: absolute;
+  bottom: -2px;
+  right: 580px;
+  width: 200px;
+  height: 200px;
+  background: url(../img/objects/bus-station/bus-stop-final.png) left bottom no-repeat;
+  background-size: contain;
+}
+
+#bus-bench {
+  position: absolute;
+  bottom: -5px;
+  right: 580px;
+  width: 220px;
+  height: 443px;
+  background: url(../img/objects/bus-station/bus-bench-final.png) left bottom no-repeat;
+  background-size: contain;
+}
+
+.object {
+  position: absolute;
+  bottom: -2px;
+  width: 180px;
+  height: 300px;
+}
+
+.object .back {
+  z-index: 1;
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 350px;
+  height: 300px;
+  background: url(../img/objects/thicket-1.png) left bottom no-repeat;
+  background-size: contain;
+}
+
+.object .front {
+  z-index: 4;
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 560px;
+  height: 120px;
+  background: url(../img/objects/thicket-front.png) left bottom no-repeat;
+  background-size: contain;
+}
+
+.object .core {
+  z-index: 2;
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 300px;
+  background-position: left bottom;
+  background-repeat: repeat-x;
+  background-size: contain;
+}

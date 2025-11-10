@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="EN">
+
+  <head>
+    <meta charset="utf-8">
+    <title>Little Farm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="./favicon.png">
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/scene.css">
+    <link rel="stylesheet" href="css/ui.css">
+    <link rel="stylesheet" href="css/character.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre:wght@300;400&family=Kalam:wght@300;400;700&family=Material+Symbols+Outlined:wght@400&display=swap"
+      rel="stylesheet">
+
+    <style>
+      @font-face {
+        font-family: 'Chiller';
+        src: url('./fonts/CHILLER.TTF');
+        /* free for personal use */
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <div id="startscreen">
+    </div>
+    <div id="viewport">
+      <div id="ui">
+        <div id="coins">
+          <div class="coin"></div>
+          <div class="coin"></div>
+          <div class="coin"></div>
+        </div>
+      </div>
+      <div id="background"></div>
+      <div id="clouds"></div>
+      <main style="right: 0px">
+        <div id="tutorial-a-d">
+          <img src="img/ui/tutorial-a-d.png">
+        </div>
+        <div id="tutorial-e">
+          <img src="img/ui/tutorial-e.png">
+        </div>
+        <div id="character" style="right: 760px">
+          <img src="img/character/hero-front.png">
+        </div>
+        <div id="objects">
+          <div id="bus-bench">
+            <div class"back"></div>
+            <div class"object"></div>
+            <div class"front"></div>
+          </div>
+          <div id="bus-stop"></div>
+        </div>
+      </main>
+      <div id="foreground"></div>
+    </div>
+    <script src="js/init.js" type="module"></script>
+  </body>
+</html>

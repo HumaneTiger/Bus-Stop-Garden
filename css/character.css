@@ -1,0 +1,13 @@
+#character {
+  position: absolute;
+  bottom: -4px;
+  /*right: 760px;*/ /* inline style */
+  width: 100px;
+  height: 160px;
+  z-index: 3;
+}
+
+#character img {
+  width: auto;
+  height: 100%;
+}
