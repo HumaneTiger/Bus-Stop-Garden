@@ -9,6 +9,7 @@ let left = false, right = false, pay = false;
 export default {
   init: function () {
     this.initMovement();
+    this.initOthers();
     // Start the loop
     requestAnimationFrame(() => this.update());
   },
@@ -24,6 +25,21 @@ export default {
     });
   },
 
+  initOthers: function () {
+    document.addEventListener('keydown', (e) => {
+      this.handleKeyPress(e);
+    });
+  },
+
+  handleKeyPress: function (ev) { 
+    const keyPressed = ev;
+    if (keyPressed.code === 'ArrowDown' || keyPressed.key === 'e' || keyPressed.key === 's') {
+      Ui.payPrice();
+      pay = true;
+      this.checkTutorial();
+    }
+  },
+
   update: function () {
     if (keys['ArrowLeft'] || keys['a']) {
       Character.moveLeft();
@@ -36,11 +52,6 @@ export default {
       right = true;
       this.checkTutorial();
       Scene.checkCollision();
-    }
-    if (keys['ArrowDown'] || keys['e'] || keys['s']) {
-      Ui.payPrice();
-      pay = true;
-      this.checkTutorial();
     }
 
     requestAnimationFrame(() => this.update());

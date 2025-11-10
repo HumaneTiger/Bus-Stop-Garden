@@ -19,9 +19,9 @@ export default {
             <img class="final" src="../img/objects/${objKey}/${obj.stage}-final.png">
           </div>
           <div class="coin-slots">
-            <div class="coin-slot"></div>
-            <div class="coin-slot"></div>
-            <div class="coin-slot"></div>
+            <div class="coin-slot unpaid"></div>
+            <div class="coin-slot unpaid"></div>
+            <div class="coin-slot unpaid"></div>
           </div>
           <div class="front"></div>
         </div>`;

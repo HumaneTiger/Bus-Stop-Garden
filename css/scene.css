@@ -101,8 +101,19 @@
   display: inline-block;
   width: 32px;
   height: 32px;
-  background: url(../img/ui/coin-slot.png) left top no-repeat;
   background-size: contain;
+  background-position: left top;
+  background-repeat: no-repeat;
+  transition: transform 0.3s ease-in;
+}
+
+.object .coin-slots .coin-slot.unpaid {
+  background-image: url(../img/ui/coin-slot.png);
+}
+
+.object .coin-slots .coin-slot.paid {
+  background-image: url(../img/ui/coin.png);
+  transform: scale(0);
 }
 
 .object .core img {
