@@ -2,11 +2,10 @@ var game = {
   coins: 3,
   characterPosition: 760,
   gamePaused: false,
+  activeObject: null,
 };
 
 const plants = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-
 
 var objects = {
   fence: {

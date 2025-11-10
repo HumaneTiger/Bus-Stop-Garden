@@ -1,8 +1,10 @@
 import Character from './character.js';
+import Scene from './scene.js';
+import Ui from './ui.js';
 
 // Object to track pressed keys
 const keys = {};
-let left = false, right = false;
+let left = false, right = false, pay = false;
 
 export default {
   init: function () {
@@ -27,10 +29,17 @@ export default {
       Character.moveLeft();
       left = true;
       this.checkTutorial();
+      Scene.checkCollision();
     }
     if (keys['ArrowRight'] || keys['d']) {
       Character.moveRight();
       right = true;
+      this.checkTutorial();
+      Scene.checkCollision();
+    }
+    if (keys['ArrowDown'] || keys['e'] || keys['s']) {
+      Ui.payPrice();
+      pay = true;
       this.checkTutorial();
     }
 
@@ -39,6 +48,9 @@ export default {
   checkTutorial: function () {
     if (left && right)  {
       document.getElementById('tutorial-a-d').classList.add('done');
+    }
+    if (pay)  {
+      document.getElementById('tutorial-e').classList.add('done');
     }
   },
   

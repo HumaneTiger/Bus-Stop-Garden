@@ -3,6 +3,7 @@ import Controls from './controls.js';
 import Character from './character.js';
 import Interactions from './interactions.js';
 import Scene from './scene.js';
+import Ui from './ui.js';
 
 let startHour = 7; // 7
 let ticksPerHour = 6; // 6
@@ -24,6 +25,7 @@ window.timeIsUnity = {
   Controls.init();
   Character.init();
   Interactions.init();
+  Ui.init();
   bind();
   initiateMainGameLoop();
 }

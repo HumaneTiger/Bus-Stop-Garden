@@ -83,3 +83,58 @@
   background-repeat: repeat-x;
   background-size: contain;
 }
+
+.object .coin-slots {
+  z-index: 3;
+  position: absolute;
+  bottom: 185px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 32px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.5s ease-out, bottom 0.5s ease-out;
+}
+
+.object .coin-slots .coin-slot {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background: url(../img/ui/coin-slot.png) left top no-repeat;
+  background-size: contain;
+}
+
+.object .core img {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: opacity 0.3s ease-out;
+}
+
+.object .core .rubble {
+  z-index: 1;
+  opacity: 1;
+}
+
+.object .core .preview {
+  z-index: 2;
+  opacity: 0;
+}
+
+.object .core .final {
+  z-index: 3;
+  opacity: 0;
+}
+
+.object.active .core .rubble {
+  opacity: 0;
+}
+.object.active .core .preview {
+  opacity: 1;
+}
+.object.active .coin-slots {
+  opacity: 1;
+  bottom: 200px;
+}
