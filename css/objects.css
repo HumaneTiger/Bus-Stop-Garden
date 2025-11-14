@@ -91,7 +91,6 @@
   left: 50%;
   transform: translateX(-50%);
   width: 200px;
-  height: 32px;
   text-align: center;
   opacity: 0;
   transition: opacity 0.5s ease-out, bottom 0.5s ease-out;
@@ -101,6 +100,7 @@
   display: inline-block;
   width: 32px;
   height: 32px;
+  margin: 0 2px;
   background-size: contain;
   background-position: left top;
   background-repeat: no-repeat;
@@ -121,7 +121,7 @@
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  transition: opacity 0.3s ease-out;
+  transition: opacity 1s ease-out;
 }
 
 .object .core .rubble {
@@ -130,15 +130,14 @@
 }
 
 .object .core .preview {
-  z-index: 2;
   opacity: 0;
 }
 
 .object .core .final {
-  z-index: 3;
   opacity: 0;
 }
 
+.object.upgraded .core .rubble,
 .object.active .core .rubble {
   opacity: 0;
 }
@@ -148,4 +147,34 @@
 .object.active .coin-slots {
   opacity: 1;
   bottom: 200px;
+}
+
+.object .coin-slots.done {
+  opacity: 0;
+  bottom: 220px;
+}
+
+.object.active .core .preview.is--visible {
+  opacity: 1;
+}
+
+.object .core .final.is--visible {
+  opacity: 1;
+}
+
+/* special objects styles */
+#fence .stage-5.special {
+  position: absolute;
+  left: 275px;
+  bottom: 166px;
+  animation: rotating 3s linear infinite;
+}
+
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

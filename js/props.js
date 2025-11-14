@@ -1,33 +1,39 @@
 var game = {
-  coins: 3,
+  coins: 30,
   characterPosition: 760,
   gamePaused: false,
-  activeObject: null,
 };
 
 const plants = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-var objects = {
+var gameObjects = {
   fence: {
     position: 960,
     stage: 1,
+    maxStages: 5,
+    specialStage: 5,
     plants: plants,
-    stageCosts: [3, 5, 8],
+    stageCosts: [3, 4, 2, 2, 5],
     rubble: 4,
+    zIndex: 2,
   },
   house: {
-    position: 1230,
-    stage: 2,
-    plants: plants,
-    stageCosts: [0, 10, 12],
+    position: 1178,
+    stage: 1,
+    maxStages: 2,
+    plants: false,
+    stageCosts: [9, 5],
     rubble: 1,
+    zIndex: 1,
   },
   tickets: {
     position: 300,
     stage: 1,
+    maxStages: 1,
     plants: plants,
     stageCosts: [10],
     rubble: 3,
+    zIndex: 1,
   },
 };
 
@@ -44,11 +50,11 @@ export default {
   },
 
   getGameObjects: function () {
-    return objects;
+    return gameObjects;
   },
 
   getGameObject: function (prop) {
-    return objects[prop];
+    return gameObjects[prop];
   },
 
   pauseGame: function (pause) {

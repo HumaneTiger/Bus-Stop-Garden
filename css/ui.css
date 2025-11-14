@@ -43,8 +43,25 @@
   display: inline-block;
   width: 32px;
   height: 32px;
-  margin: 0 0;
   background: url(../img/ui/coin.png) center center no-repeat;
   background-size: contain;
-  transition: transform 0.3s ease-in, margin 0.3s ease-in;
+  transition: width 0.3s ease-in, transform 0.3s ease-in, margin 0.3s ease-in;
+  position: relative;
+  z-index: 2;
+}
+
+#coins .coin:first-child {
+  z-index: 1;
+}
+
+#coins.few .coin {
+  margin: 0 4px;
+}
+
+#coins.normal .coin {
+  margin: 0 -4px;
+}
+
+#coins.many .coin {
+  margin: 0 -8px;
 }

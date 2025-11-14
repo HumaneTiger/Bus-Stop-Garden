@@ -2,7 +2,7 @@ import Props from './props.js';
 import Controls from './controls.js';
 import Character from './character.js';
 import Interactions from './interactions.js';
-import Scene from './scene.js';
+import Objects from './objects.js';
 import Ui from './ui.js';
 
 let startHour = 7; // 7
@@ -21,7 +21,7 @@ window.timeIsUnity = {
 // initialize everything
 {
   Props.init();
-  Scene.init();
+  Objects.init();
   Controls.init();
   Character.init();
   Interactions.init();

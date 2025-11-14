@@ -71,3 +71,7 @@ main {
   background-repeat: no-repeat;
   transform: translateY(-50%);
 }
+
+.is--hidden {
+  display: none !important;
+}
