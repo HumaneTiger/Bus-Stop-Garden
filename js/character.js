@@ -2,7 +2,25 @@ const characterElem = document.getElementById('character');
 const boundary = 700;
 
 export default {
+
+  walkingState: 'idle', /* also: walking-left, walking-right */
+
   init: function () {
+    this.initWalkingAnimation();
+  },
+
+  initWalkingAnimation: function () {
+    const frames = [-10, -85, -155, -240, -315, -390, -465];
+    const frameDuration = 100; // ms per frame
+    setInterval(() => {
+      if (this.walkingState === 'walking-left' || this.walkingState === 'walking-right') {
+        const frameIndex = Math.floor((Date.now() / frameDuration) % 7);
+        characterElem.querySelector('.legs').style.backgroundPosition = frames[frameIndex] + 'px 0';
+      } else {
+        // Reset to idle position
+        characterElem.querySelector('.legs').style.backgroundPosition = frames[0] + 'px 0';
+      }
+    }, 1000/30);
   },
 
   getCharacterPosition: function () {
@@ -11,7 +29,17 @@ export default {
     return characterPosition;
   },
 
+  changeWalkingState: function (state) {
+    this.walkingState = state;
+    characterElem.className = state;
+  },
+
+  idle: function () {
+    this.changeWalkingState('idle');
+  },
+
   moveRight: function () {
+    this.changeWalkingState('walking-right');
     const mainCanvas = document.querySelector('main');
     let characterPosition = this.getCharacterPosition();
     const characterRect = characterElem.getBoundingClientRect();
@@ -30,6 +58,7 @@ export default {
   },
 
   moveLeft: function () {
+    this.changeWalkingState('walking-left');
     const mainCanvas = document.querySelector('main');
     let characterPosition = this.getCharacterPosition();
     const characterRect = characterElem.getBoundingClientRect();

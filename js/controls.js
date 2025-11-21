@@ -53,12 +53,13 @@ export default {
       left = true;
       this.checkTutorial();
       Objects.checkCollision();
-    }
-    if (keys['ArrowRight'] || keys['d']) {
+    } else if (keys['ArrowRight'] || keys['d']) {
       Character.moveRight();
       right = true;
       this.checkTutorial();
       Objects.checkCollision();
+    } else {
+      Character.idle();
     }
 
     requestAnimationFrame(() => this.update());

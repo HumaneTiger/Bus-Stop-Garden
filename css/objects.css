@@ -1,3 +1,8 @@
+main {
+  --background-transition-time: 180s;
+  --plant-transition-time: 60s;
+}
+
 #clouds {
   animation: moving-cloud 50s linear infinite;
   position: absolute;
@@ -45,30 +50,96 @@
   bottom: -2px;
   width: 180px;
   height: 300px;
+
+  .back {
+    z-index: 1;
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 350px;
+    height: 300px;
+    background: url(../img/objects/thicket-1.png) left bottom no-repeat;
+    background-size: 100% 250px;
+    background-position: center bottom;
+    transition: background-size var(--background-transition-time) ease-in,
+      bottom var(--background-transition-time) ease-in;
+  }
+  .back::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    width: 100%;
+    height: 50px;
+    background: url(../img/objects/grass-back.png) left bottom no-repeat;
+    background-size: 100% 0;
+    transition: background-size var(--background-transition-time) ease-out,
+      bottom var(--background-transition-time) ease-in;
+  }
+
+  .plants {
+    z-index: 4;
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 560px;
+    height: 100px;
+
+    .plant {
+      width: 60px;
+      height: 100px;
+      position: absolute;
+      background-size: 0 0;
+      background-position: center bottom;
+      background-repeat: no-repeat;
+      transition: background-size var(--plant-transition-time) ease-in,
+        bottom var(--plant-transition-time) ease-in;
+    }
+  }
+
+  .front {
+    z-index: 4;
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 560px;
+    height: 120px;
+    background: url(../img/objects/thicket-front.png) left bottom no-repeat;
+    background-size: 100% 60px;
+    background-position: center bottom;
+    transition: background-size var(--background-transition-time) ease-in,
+      bottom var(--background-transition-time) ease-in;
+  }
+
+  .front::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    width: 100%;
+    height: 50px;
+    background: url(../img/objects/grass-front.png) left bottom no-repeat;
+    background-size: 100% 0px;
+    transition: background-size var(--background-transition-time) ease-out,
+      bottom var(--background-transition-time) ease-in;
+  }
 }
 
-.object .back {
-  z-index: 1;
-  position: absolute;
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 350px;
-  height: 300px;
-  background: url(../img/objects/thicket-1.png) left bottom no-repeat;
-  background-size: contain;
-}
-
-.object .front {
-  z-index: 4;
-  position: absolute;
-  bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 560px;
-  height: 120px;
-  background: url(../img/objects/thicket-front.png) left bottom no-repeat;
-  background-size: contain;
+.object.touched {
+  .back,
+  .front {
+    background-size: 0 0;
+    bottom: 0;
+  }
+  .back::after {
+    background-size: 100% 150px;
+    bottom: 0;
+  }
+  .front::after {
+    background-size: 100% 100px;
+    bottom: 0;
+  }
 }
 
 .object .core {

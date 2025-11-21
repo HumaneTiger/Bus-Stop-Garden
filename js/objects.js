@@ -19,23 +19,24 @@ export default {
           <div class="back"></div>
           <div class="core"></div>
           <div class="coin-slots"></div>
+          <div class="plants"></div>
           <div class="front"></div>
         </div>`;
       const slotContainerCore = document.getElementById(objKey).querySelector('.core');
       // add rubble image if needed
       if (obj.rubble) {
         slotContainerCore.innerHTML += `
-            <img class="rubble" src="../img/objects/rubble-${obj.rubble}.png">`;
+            <img class="rubble" src="./img/objects/rubble-${obj.rubble}.png">`;
       }
       // add all preview and final images
       for (let i = 1; i <= obj.maxStages; i++) {
         if (i >= obj.stage) {
           slotContainerCore.innerHTML += `
-            <img class="preview stage-${i}${i > obj.stage ? ' is--hidden' : ''}" src="../img/objects/${objKey}/${i}-preview.png">`;
+            <img class="preview stage-${i}${i > obj.stage ? ' is--hidden' : ''}" src="./img/objects/${objKey}/${i}-preview.png">`;
         }
         if (obj.specialStage && i === obj.specialStage) {
           slotContainerCore.innerHTML += `
-            <img class="preview special stage-${i}${i > obj.stage ? ' is--hidden' : ''}" src="../img/objects/${objKey}/${i}a-preview.png">`;
+            <img class="preview special stage-${i}${i > obj.stage ? ' is--hidden' : ''}" src="./img/objects/${objKey}/${i}a-preview.png">`;
         }
         let finalAdditonalClassName;
         if (i < obj.stage) {
@@ -46,10 +47,10 @@ export default {
           finalAdditonalClassName = '';
         }
         slotContainerCore.innerHTML += `
-          <img class="final stage-${i}${finalAdditonalClassName}" src="../img/objects/${objKey}/${i}-final.png">`;
+          <img class="final stage-${i}${finalAdditonalClassName}" src="./img/objects/${objKey}/${i}-final.png">`;
         if (obj.specialStage && i === obj.specialStage) {
           slotContainerCore.innerHTML += `
-            <img class="final special stage-${i}${finalAdditonalClassName}" src="../img/objects/${objKey}/${i}a-final.png">`;
+            <img class="final special stage-${i}${finalAdditonalClassName}" src="./img/objects/${objKey}/${i}a-final.png">`;
         }
       }
       // add coin slots for stage upgrade price     
@@ -59,6 +60,16 @@ export default {
         coinSlot.classList.add('coin-slot', 'unpaid');
         slotContainerCoinSlots.appendChild(coinSlot);
       }
+    }
+  },
+
+  growNextPlant: function () {
+    const allObjects = Props.getGameObjects();
+    for (const objKey in allObjects) {
+      const obj = allObjects[objKey];
+      const objectElement = document.getElementById(objKey);
+      const plantsContainer = objectElement.querySelector('.plants');
+      const currentPlants = plantsContainer.querySelectorAll('.plant').length;
     }
   },
 
@@ -143,6 +154,7 @@ export default {
         return;
       }
       obj.classList.remove('active');
+      obj.classList.add('touched');
       obj.classList.replace('paying', 'upgraded');
       slotContainer.classList.add('done');
       slotContainer.querySelectorAll('.paid').forEach(el => {

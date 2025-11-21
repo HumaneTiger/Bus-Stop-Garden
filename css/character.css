@@ -1,13 +1,123 @@
 #character {
   position: absolute;
-  bottom: -4px;
-  /*right: 760px;*/ /* inline style */
-  width: 100px;
-  height: 160px;
+  bottom: 0;
+  width: 70px;
+  height: 150px;
   z-index: 3;
 }
 
-#character img {
-  width: auto;
-  height: 100%;
+#character .body {
+  position: absolute;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  top: 0;
+  width: 73px;
+  height: 120px;
+  z-index: 5;
+  animation: bounce 0.7s ease-in-out infinite;
+}
+
+#character .legs {
+  position: absolute;
+  bottom: -2px;
+  width: 100%;
+  height: 64px;
+  background-image: url(../img/character/walking-legs.png);
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+  z-index: 4;
+}
+#character .arm {
+  position: absolute;
+  display: none;
+  top: 65px;
+  width: 20px;
+  height: 84px;
+  background-image: url(../img/character/hero/arm.png);
+  background-size: 100% auto;
+  background-position: top center;
+  background-repeat: no-repeat;
+  transform-origin: center 4px;
+  left: 20px;
+  z-index: 6;
+  animation: arm-swing 0.7s linear infinite;
+}
+
+#character.walking-left {
+  transform: scaleX(-1);
+}
+
+#character.idle .body {
+  background-image: url(../img/character/hero/frontview.png);
+  animation: idle-bounce 2.7s ease-in-out infinite;
+  width: 92px;
+  left: -10px;
+}
+
+#character.idle .legs {
+  background-image: url(../img/character/hero/idle-legs.png);
+}
+
+#character.walking-left .body,
+#character.walking-right .body {
+  background-image: url(../img/character/hero/sideview.png);
+  animation: bounce 0.7s ease-in-out infinite;
+
+  .arm {
+    display: block;
+  }
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-8px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  75% {
+    transform: translateY(-8px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes idle-bounce {
+  0% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-2px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  75% {
+    transform: translateY(-2px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes arm-swing {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(30deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(-30deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
 }
