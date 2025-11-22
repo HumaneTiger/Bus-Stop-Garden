@@ -8,6 +8,8 @@ const interestMapping = Props.getInterestsMapping();
 const interestConditions = Props.getInterestConditions();
 const gameObjects = Props.getGameObjects();
 
+const GENERAL_OFFSET = 200; // Applied to all waypoints and micro-movements during exploration
+
 export default {
 
   activeVisitorGroup: [],
@@ -147,8 +149,6 @@ export default {
     // Visitors start at bus-station but path begins with actual objects to explore
     // Billboard is ignored (player-only)
     // When bus honks, they return to bus-station from wherever they are
-    
-    const generalOffset = 200;
 
     const objectKeys = Object.keys(gameObjects).filter(key => key !== 'billboard' && key !== 'bus-station');
     const objectsByPosition = objectKeys.map(key => ({
@@ -189,29 +189,32 @@ export default {
     }
     
     // Second pass: expand each position with back-and-forth movements for exploration
-    // This creates a natural "lingering" effect around objects
+    // Visitors explore around each object BEFORE reaching the exact center position
+    // This creates a natural "lingering" effect and delays collision detection
     const enrichedPath = [];
     
     for (let i = 0; i < path.length; i++) {
       const waypoint = path[i];
-      enrichedPath.push(waypoint);
       
-      // Add micro-movements around the waypoint (unless it's the last position)
+      // Add micro-movements BEFORE the exact waypoint (unless it's the last position)
       if (i < path.length - 1) {
         const nextWaypoint = path[i + 1];
         const offset = 30 + Math.random() * 40; // 30-70 pixel offset
         const direction = nextWaypoint > waypoint ? -1 : 1; // Offset opposite to travel direction
         
-        // Add 2-3 positions that move back and forth
+        // Add 2-3 positions that move back and forth with offset
         const microSteps = 2 + Math.floor(Math.random() * 2); // 2-3 micro-movements
         for (let m = 0; m < microSteps; m++) {
-          const offsetPos = waypoint + (direction * offset * (m % 2 === 0 ? 1 : -0.5)) + generalOffset;
+          const offsetPos = waypoint + (direction * offset * (m % 2 === 0 ? 1 : -0.5)) + GENERAL_OFFSET;
           enrichedPath.push(Math.round(offsetPos));
         }
       }
+      
+      // Then add the exact waypoint position (with offset for consistency)
+      enrichedPath.push(Math.round(waypoint + GENERAL_OFFSET));
     }
     
-    // Add the initial position as the final waypoint (to return to where they started)
+    // Add the initial position as the final waypoint (to return to where they started) - no offset
     enrichedPath.push(initialPosition);
     
     return enrichedPath;
@@ -242,6 +245,9 @@ export default {
 
       // Check if reached waypoint
       if (Math.abs(currentPos - targetPos) <= tolerance) {
+        // Check for collision with objects at exact position
+        this.checkCollision(visitor, targetPos);
+        
         // Start pause at this waypoint
         const pauseDuration = 1000 + Math.random() * 2000; // 1-3 seconds
         visitor.isPaused = true;
@@ -285,6 +291,43 @@ export default {
         element.classList.add('is--walking');
       }
     });
+  },
+
+  checkCollision: function (visitor, position) {
+    // Check if this position matches any game object (accounting for GENERAL_OFFSET)
+    const tolerance = 20; // tolerance for position matching
+    
+    // Find which object this position corresponds to
+    let collidedObject = null;
+    
+    for (const [objectKey, objectData] of Object.entries(gameObjects)) {
+      if (objectKey === 'billboard' || objectKey === 'bus-station') continue;
+      
+      const objectPos = objectData.position + GENERAL_OFFSET;
+      if (Math.abs(position - objectPos) <= tolerance) {
+        collidedObject = objectKey;
+        break;
+      }
+    }
+    
+    // If collision happened, check if it matches visitor's interests
+    if (collidedObject && !visitor.found) {
+      const possibleObjectName = visitor.objectOfInterest_possible.name;
+      const possibleCondition = interestConditions[possibleObjectName];
+      if (possibleCondition && possibleCondition.objectKey === collidedObject) {
+        // COLLISION DETECTED - Visitor found what they're looking for!
+        visitor.found = true;
+        
+        // Calculate coins to drop based on object stage and visitor wealth
+        const objectStage = gameObjects[collidedObject].stage;
+        const coinsEarned = visitor.wealthLevel * objectStage;
+        visitor.coinsSpent = coinsEarned;
+        
+        // Console log the discovery
+        console.log(`✨ ${visitor.name} found ${possibleObjectName}! Coins earned: ${coinsEarned}`);
+        console.log(`   Object: ${collidedObject} (Stage ${objectStage}), Visitor wealth: ${visitor.wealthLevel}`);
+      }
+    }
   }
 
 };

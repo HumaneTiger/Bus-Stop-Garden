@@ -168,7 +168,7 @@ const interestsMapping = {
   animals: ['cow', 'dog-house', 'bees-hive'],
   decoration: ['bench', 'potted-flowers', 'windmill', 'garden-gnome', 'deco-boxes', 'kite', 'scarecrow', 'garden-tools'],
   flowers: ['sunflower', 'potted-flowers', 'fruit-tree', 'flower-meadow', 'wildflower-meadow'],
-  peace: ['wildflower-meadow', 'meditation-spot'],
+  peace: ['wildflower-meadow', 'bench'],
   nature: ['flower-meadow', 'fruit-tree', 'water-pump', 'wildflower-meadow', 'orchard'],
   food: ['vegetables', 'fruit-tree', 'orchard'],
 };
@@ -178,7 +178,6 @@ const interestsMapping = {
 const interestConditions = {
   'cow': { objectKey: 'barn', minStage: 3 },
   'sunflower': { objectKey: 'fence', minStage: 2 },
-  'bench': { objectKey: 'bus-station', minStage: 2 },
   'potted-flowers': [
     { objectKey: 'fence', minStage: 3 },
     { objectKey: 'house', minStage: 2 }
@@ -191,7 +190,7 @@ const interestConditions = {
   'vegetables': { objectKey: 'garden-shed', minStage: 2, toBeImplemented: true  },
   'stone-statue': { objectKey: 'temple', minStage: 3, toBeImplemented: true  },
   'wildflower-meadow': { objectKey: 'wildflower-meadow', minStage: 2, toBeImplemented: true  },
-  'meditation-spot': { objectKey: 'wildflower-meadow', minStage: 3, toBeImplemented: true  },
+  'bench': { objectKey: 'wildflower-meadow', minStage: 2, toBeImplemented: true },
   'fruit-tree': { objectKey: 'orchard', minStage: 2, toBeImplemented: true  },
   'orchard': { objectKey: 'orchard', minStage: 3, toBeImplemented: true  },
   'dog-house': { objectKey: 'house', minStage: 2, toBeImplemented: true },
