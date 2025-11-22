@@ -1,0 +1,100 @@
+#bus {
+  position: absolute;
+  right: -700px;
+  bottom: 0;
+  width: 488px;
+  height: 263px;
+  transition: right 6s ease-out;
+
+  .bus-body {
+    position: relative;
+    transform: translateY(3px);
+    width: 100%;
+    z-index: 4;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .wind-mill {
+    position: absolute;
+    right: 4px;
+    top: -30px;
+    width: 65px;
+    height: auto;
+    z-index: 6;
+
+    img {
+      width: 100%;
+      height: auto;
+      filter: hue-rotate(256deg);
+      animation: rotating 2.8s linear infinite;
+    }
+  }
+
+  .bus-wheels {
+    position: absolute;
+    bottom: -13px;
+    width: 100%;
+    z-index: 3;
+
+    img {
+      width: 85px;
+      height: auto;
+    }
+
+    .front-wheel {
+      position: absolute;
+      bottom: 0;
+      left: 66px;
+    }
+
+    .back-wheel {
+      position: absolute;
+      bottom: 0;
+      right: 92px;
+    }
+  }
+
+  &.is--driving {
+    .bus-body {
+      animation: busDrive 0.5s ease-in-out infinite;
+    }
+
+    .wheel {
+      animation: wheelsTurning 1s linear infinite;
+      transform-origin: 43px 43px;
+    }
+  }
+
+  &.is--arriving {
+    right: 260px;
+  }
+
+  &.is--parked {
+    right: 260px;
+  }
+}
+
+@keyframes wheelsTurning {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes busDrive {
+  0% {
+    transform: translateY(3px);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+  100% {
+    transform: translateY(3px);
+  }
+}

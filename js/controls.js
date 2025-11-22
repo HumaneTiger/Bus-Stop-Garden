@@ -1,6 +1,7 @@
 import Props from './props.js';
 import Character from './character.js';
 import Objects from './objects.js';
+import Visitors from './visitors.js';
 
 // Object to track pressed keys
 const keys = {};
@@ -44,6 +45,9 @@ export default {
         await Objects.triggerFinalPayment(activeObject);
         await Objects.triggerUpdateForAllObjects();
       }
+    } else if (keyPressed.key === 'b') {
+      // For testing: trigger bus arriving
+      Visitors.triggerBusArrival();
     }
   },
 

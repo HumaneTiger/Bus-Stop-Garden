@@ -6,6 +6,7 @@ import Objects from './objects.js';
 import Plants from './plants.js';
 import Visitors from './visitors.js';
 import Ui from './ui.js';
+import Audio from './audio.js';
 
 let startHour = 7; // 7
 let ticksPerHour = 6; // 6
@@ -23,6 +24,7 @@ window.timeIsUnity = {
 // initialize everything
 {
   Props.init();
+  Audio.init();
   Objects.init();
   Controls.init();
   Character.init();
