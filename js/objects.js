@@ -11,6 +11,7 @@ export default {
 
   initSceneObjects: function () {
     const objectsContainer = document.getElementById('objects');
+    const objectsForegroundContainer = document.getElementById('objects-foreground');
     const allObjects = Props.getGameObjects();
     for (const objKey in allObjects) {
       const obj = allObjects[objKey];
@@ -22,6 +23,14 @@ export default {
           <div class="plants"></div>
           <div class="front"></div>
         </div>`;
+      
+      // Create foreground container for plants to appear in front of character
+      objectsForegroundContainer.innerHTML += `
+        <div id="${objKey}-foreground" class="object" style="right: ${obj.position}px;">
+          <div class="plants"></div>
+          <div class="front"></div>
+        </div>`;
+      
       const slotContainerCore = document.getElementById(objKey).querySelector('.core');
       // add rubble image if needed
       if (obj.rubble) {
@@ -60,16 +69,6 @@ export default {
         coinSlot.classList.add('coin-slot', 'unpaid');
         slotContainerCoinSlots.appendChild(coinSlot);
       }
-    }
-  },
-
-  growNextPlant: function () {
-    const allObjects = Props.getGameObjects();
-    for (const objKey in allObjects) {
-      const obj = allObjects[objKey];
-      const objectElement = document.getElementById(objKey);
-      const plantsContainer = objectElement.querySelector('.plants');
-      const currentPlants = plantsContainer.querySelectorAll('.plant').length;
     }
   },
 
@@ -148,6 +147,7 @@ export default {
   // final payment animation
   async triggerFinalPayment(activeObject) {
     const obj = document.getElementById(activeObject);
+    const objForeground = document.getElementById(activeObject + '-foreground');
     if (obj) {
       const slotContainer = obj.querySelector('.coin-slots');
       if (!obj.classList.contains('paying') || !slotContainer) {
@@ -160,6 +160,15 @@ export default {
       slotContainer.querySelectorAll('.paid').forEach(el => {
         el.style.transform = 'scale(1.2)';
       });
+      // also add touched class to foreground object for grass growth
+      if (objForeground) {
+        objForeground.classList.add('touched');
+      }
+      // mark object as touched in game state
+      const objectProps = Props.getGameObject(activeObject);
+      if (objectProps) {
+        objectProps.touched = true;
+      }
     }
     this.activeObject = null;
     this.activeObjectState = null;

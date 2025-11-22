@@ -3,6 +3,8 @@ import Controls from './controls.js';
 import Character from './character.js';
 import Interactions from './interactions.js';
 import Objects from './objects.js';
+import Plants from './plants.js';
+import Visitors from './visitors.js';
 import Ui from './ui.js';
 
 let startHour = 7; // 7
@@ -26,6 +28,8 @@ window.timeIsUnity = {
   Character.init();
   Interactions.init();
   Ui.init();
+  Plants.init();
+  Visitors.init();
   bind();
   initiateMainGameLoop();
 }

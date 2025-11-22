@@ -1,6 +1,5 @@
 main {
   --background-transition-time: 180s;
-  --plant-transition-time: 60s;
 }
 
 #clouds {
@@ -25,24 +24,19 @@ main {
   }
 }
 
-#bus-stop {
+#objects,
+#objects-foreground {
   position: absolute;
-  bottom: -2px;
-  right: 580px;
-  width: 200px;
-  height: 200px;
-  background: url(../img/objects/bus-station/bus-stop-final.png) left bottom no-repeat;
-  background-size: contain;
+  width: 100%;
+  height: 100%;
 }
 
-#bus-bench {
-  position: absolute;
-  bottom: -5px;
-  right: 580px;
-  width: 220px;
-  height: 443px;
-  background: url(../img/objects/bus-station/bus-bench-final.png) left bottom no-repeat;
-  background-size: contain;
+#objects {
+  z-index: 1;
+}
+
+#objects-foreground {
+  z-index: 5;
 }
 
 .object {
@@ -75,27 +69,6 @@ main {
     background-size: 100% 0;
     transition: background-size var(--background-transition-time) ease-out,
       bottom var(--background-transition-time) ease-in;
-  }
-
-  .plants {
-    z-index: 4;
-    position: absolute;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 560px;
-    height: 100px;
-
-    .plant {
-      width: 60px;
-      height: 100px;
-      position: absolute;
-      background-size: 0 0;
-      background-position: center bottom;
-      background-repeat: no-repeat;
-      transition: background-size var(--plant-transition-time) ease-in,
-        bottom var(--plant-transition-time) ease-in;
-    }
   }
 
   .front {
@@ -140,6 +113,14 @@ main {
     background-size: 100% 100px;
     bottom: 0;
   }
+}
+
+#objects .front {
+  background: initial; /* no thicket in the back objects layer */
+}
+
+#objects-foreground .object.touched .front::after {
+  background-size: 80% 60px;
 }
 
 .object .core {
@@ -241,11 +222,30 @@ main {
   animation: rotating 3s linear infinite;
 }
 
+#barn .stage-3.special {
+  position: absolute;
+  left: 216px;
+  bottom: 33px;
+  animation: headShaking 3s ease-in-out infinite;
+}
+
 @keyframes rotating {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes headShaking {
+  0% {
+    transform: rotate(-20deg);
+  }
+  50% {
+    transform: rotate(30deg);
+  }
+  100% {
+    transform: rotate(-20deg);
   }
 }
