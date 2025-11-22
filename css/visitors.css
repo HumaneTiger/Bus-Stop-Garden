@@ -98,3 +98,210 @@
     transform: translateY(3px);
   }
 }
+
+.visitor {
+  position: absolute;
+  bottom: -2px;
+  width: 70px;
+  height: 150px;
+  z-index: 3;
+  zoom: 0.9;
+
+  &.is--left-facing {
+    transform: scaleX(-1);
+  }
+
+  &.is--right-facing {
+    transform: scaleX(1);
+  }
+
+  .body {
+    position: absolute;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    bottom: 15px;
+    width: 110px;
+    height: 180px;
+    z-index: 5;
+    background-size: 100% auto;
+    background-position: left bottom;
+    animation: idle-bounce 2.7s ease-in-out infinite;
+  }
+
+  .arm {
+    position: absolute;
+    width: 36px;
+    height: 84px;
+    background-size: 100% auto;
+    background-position: top center;
+    background-repeat: no-repeat;
+    transform-origin: center 4px;
+    z-index: 6;
+  }
+
+  .leg {
+    position: absolute;
+    bottom: -2px;
+    width: 38px;
+    height: 60px;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    z-index: 4;
+
+    &.left-leg {
+      left: 16px;
+    }
+
+    &.right-leg {
+      left: 34px;
+    }
+  }
+}
+
+.visitor.is--walking {
+  .body {
+    animation: bounce 0.7s ease-in-out infinite;
+  }
+  .arm {
+    animation: arm-swing 0.7s linear infinite;
+  }
+  .leg {
+    animation: movingLeg 0.7s ease-in-out infinite;
+    &.left-leg {
+      left: 25px !important;
+    }
+
+    &.right-leg {
+      left: 25px !important;
+      animation-delay: 0.35s;
+    }
+  }
+}
+
+@keyframes movingLeg {
+  /* Arc phase: leg moves forward and upward */
+  0% {
+    transform: translate(0, 0);
+  }
+  15% {
+    transform: translate(4px, -10px);
+  }
+  30% {
+    transform: translate(8px, -15px);
+  }
+  45% {
+    transform: translate(12px, -10px);
+  }
+
+  /* Return phase: leg moves straight back to start */
+  60% {
+    transform: translate(12px, 0);
+  }
+  75% {
+    transform: translate(6px, 0);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+#bernard {
+  .body {
+    background-image: url(../img/character/bernard/body.png);
+  }
+  .arm {
+    background-image: url(../img/character/bernard/arm.png);
+    top: 90px;
+    left: 15px;
+  }
+  .leg {
+    background-image: url(../img/character/bernard/leg.png);
+  }
+}
+
+#cletus {
+  .body {
+    background-image: url(../img/character/cletus/body.png);
+    left: -10px;
+    bottom: 20px;
+  }
+  .arm {
+    background-image: url(../img/character/cletus/arm.png);
+    top: 70px;
+    left: 30px;
+  }
+  .leg {
+    background-image: url(../img/character/cletus/leg.png);
+  }
+}
+
+#edgar {
+  .body {
+    background-image: url(../img/character/edgar/body.png);
+    left: -10px;
+    bottom: 20px;
+  }
+  .arm {
+    background-image: url(../img/character/edgar/arm.png);
+    top: 95px;
+    left: 25px;
+  }
+  .leg {
+    background-image: url(../img/character/edgar/leg.png);
+  }
+}
+
+#hazel {
+  .body {
+    background-image: url(../img/character/hazel/body.png);
+    left: -10px;
+    bottom: 20px;
+  }
+  .arm {
+    background-image: url(../img/character/hazel/arm.png);
+    top: 85px;
+    left: 40px;
+  }
+  .leg {
+    background-image: url(../img/character/hazel/leg.png);
+  }
+}
+
+#violet {
+  .body {
+    background-image: url(../img/character/violet/body.png);
+    left: -10px;
+    bottom: 20px;
+  }
+  .arm {
+    background-image: url(../img/character/violet/arm.png);
+    top: 85px;
+    left: 15px;
+  }
+  .leg {
+    background-image: url(../img/character/violet/leg.png);
+  }
+}
+
+#ziggy {
+  .body {
+    background-image: url(../img/character/ziggy/body.png);
+    left: -10px;
+    bottom: 20px;
+  }
+  .arm {
+    background-image: url(../img/character/ziggy/arm.png);
+    top: 85px;
+    left: 25px;
+  }
+  .leg {
+    background-image: url(../img/character/ziggy/leg.png);
+  }
+  .left-leg {
+    left: 21px;
+  }
+
+  .right-leg {
+    left: 39px;
+  }
+}

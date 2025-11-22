@@ -103,7 +103,7 @@ var gameObjects = {
 var visitors = {
   bernard: {
     name: 'Bernard',
-    position: 500,
+    position: 340,
     wealthLevel: 2,
     interests: ['decoration', 'animals'],
     isVisiting: false,
@@ -113,7 +113,7 @@ var visitors = {
   },
   violet: {
     name: 'Violet',
-    position: 500,
+    position: 410,
     wealthLevel: 3,
     interests: ['flowers', 'decoration'],
     isVisiting: false,
@@ -123,7 +123,7 @@ var visitors = {
   },
   ziggy: {
     name: 'Ziggy',
-    position: 500,
+    position: 480,
     wealthLevel: 1,
     interests: ['animals', 'flowers'],
     isVisiting: false,
@@ -133,7 +133,7 @@ var visitors = {
   },
   edgar: {
     name: 'Edgar',
-    position: 500,
+    position: 550,
     wealthLevel: 3,
     interests: ['peace', 'decoration'],
     isVisiting: false,
@@ -143,7 +143,7 @@ var visitors = {
   },
   cletus: {
     name: 'Cletus',
-    position: 500,
+    position: 620,
     wealthLevel: 1,
     interests: ['animals', 'nature'],
     isVisiting: false,
@@ -153,7 +153,7 @@ var visitors = {
   },
   hazel: {
     name: 'Hazel',
-    position: 500,
+    position: 690,
     wealthLevel: 2,
     interests: ['flowers', 'nature'],
     isVisiting: false,
