@@ -42,6 +42,15 @@ export default {
           </div>
           <div class="leg left-leg"></div>
           <div class="leg right-leg"></div>
+          <div class="emotion">
+            <div class="bubble">
+              <img class="alarmed" src="./img/character/emotions/alarmed.png">
+              <img class="angry" src="./img/character/emotions/angry.png">
+              <img class="happy" src="./img/character/emotions/happy.png">
+              <img class="searching" src="./img/character/emotions/searching.png">
+              <img class="thinking" src="./img/character/emotions/thinking.png">
+            </div>
+          </div>
         </div>`;
     });
   },
@@ -252,6 +261,23 @@ export default {
         const pauseDuration = 1000 + Math.random() * 2000; // 1-3 seconds
         visitor.isPaused = true;
         visitor.pauseEndTime = Date.now() + pauseDuration;
+        
+        // Log thinking state if they haven't found what they're looking for yet
+        if (!visitor.found) {
+          const rand = Math.random();
+          
+          if (rand < 0.6) {
+            // 60% - Silent thinking, no message
+          } else if (rand < 0.8) {
+            // 20% - Generic neutral thinking
+            console.log(`🤔 ${visitor.name} is lost in thought...`);
+          } else {
+            // 20% - Reveal what they're looking for
+            const searchingFor = visitor.objectOfInterest_possible.name;
+            console.log(`🤔 ${visitor.name} is thinking... "Where could the ${searchingFor} be?"`);
+          }
+        }
+        
         visitor.pathIndex++;
         return;
       }
@@ -314,18 +340,43 @@ export default {
     if (collidedObject && !visitor.found) {
       const possibleObjectName = visitor.objectOfInterest_possible.name;
       const possibleCondition = interestConditions[possibleObjectName];
-      if (possibleCondition && possibleCondition.objectKey === collidedObject) {
-        // COLLISION DETECTED - Visitor found what they're looking for!
-        visitor.found = true;
+      
+      if (possibleCondition) {
+        // Handle array conditions (like 'potted-flowers' which can be multiple objects)
+        const conditions = Array.isArray(possibleCondition) ? possibleCondition : [possibleCondition];
         
-        // Calculate coins to drop based on object stage and visitor wealth
-        const objectStage = gameObjects[collidedObject].stage;
-        const coinsEarned = visitor.wealthLevel * objectStage;
-        visitor.coinsSpent = coinsEarned;
+        // Check if any condition matches this collision
+        let conditionMet = false;
+        for (const condition of conditions) {
+          // Check for special condition types
+          if (condition.condition === 'anyObjectTouched') {
+            // This interest is satisfied when an object got upgraded at least once
+            if (gameObjects[collidedObject].touched) {
+              conditionMet = true;
+              break;
+            }
+          } else if (condition.objectKey === collidedObject) {
+            // Standard object+stage check
+            const objectStage = gameObjects[collidedObject].stage;
+            if (objectStage >= condition.minStage) {
+              conditionMet = true;
+              break;
+            }
+          }
+        }
         
-        // Console log the discovery
-        console.log(`✨ ${visitor.name} found ${possibleObjectName}! Coins earned: ${coinsEarned}`);
-        console.log(`   Object: ${collidedObject} (Stage ${objectStage}), Visitor wealth: ${visitor.wealthLevel}`);
+        if (conditionMet) {
+          // COLLISION DETECTED - Visitor found what they're looking for!
+          visitor.found = true;
+          
+          // Calculate coins to drop based on object stage and visitor wealth
+          const objectStage = gameObjects[collidedObject].stage;
+          const coinsEarned = visitor.wealthLevel * objectStage;
+          visitor.coinsSpent = coinsEarned;
+          
+          // Console log the discovery
+          console.log(`✨ ${visitor.name} found ${possibleObjectName}! Coins dropped: ${coinsEarned}`);
+        }
       }
     }
   }

@@ -107,14 +107,6 @@
   z-index: 3;
   zoom: 0.9;
 
-  &.is--left-facing {
-    transform: scaleX(-1);
-  }
-
-  &.is--right-facing {
-    transform: scaleX(1);
-  }
-
   .body {
     position: absolute;
     background-size: 100% auto;
@@ -155,6 +147,101 @@
     &.right-leg {
       left: 34px;
     }
+  }
+
+  .emotion {
+    position: absolute;
+    top: -120px;
+    left: 10%;
+    width: 83px;
+    height: 92px;
+    z-index: 10;
+    animation: idle-bounce 2.7s ease-in-out infinite;
+
+    .bubble {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: none;
+
+      img {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        visibility: hidden;
+        transform: scale(0);
+        transform-origin: center bottom;
+        transition: transform 0.8s ease-out;
+      }
+    }
+
+    &.is--alarmed {
+      .bubble {
+        display: block;
+
+        img.alarmed {
+          visibility: visible;
+          transform: scale(1);
+        }
+      }
+    }
+
+    &.is--angry {
+      .bubble {
+        display: block;
+
+        img.angry {
+          visibility: visible;
+          transform: scale(1);
+        }
+      }
+    }
+
+    &.is--happy {
+      .bubble {
+        display: block;
+
+        img.happy {
+          visibility: visible;
+          transform: scale(1);
+        }
+      }
+    }
+
+    &.is--searching {
+      .bubble {
+        display: block;
+
+        img.searching {
+          visibility: visible;
+          transform: scale(1);
+          top: -10px;
+        }
+      }
+    }
+
+    &.is--thinking {
+      .bubble {
+        display: block;
+
+        img.thinking {
+          visibility: visible;
+          transform: scale(1);
+        }
+      }
+    }
+  }
+
+  &.is--left-facing {
+    transform: scaleX(-1);
+
+    .emotion .bubble {
+      transform: scaleX(-1);
+    }
+  }
+
+  &.is--right-facing {
+    transform: scaleX(1);
   }
 }
 
