@@ -48,6 +48,7 @@ export default {
               <img class="angry" src="./img/character/emotions/angry.png">
               <img class="happy" src="./img/character/emotions/happy.png">
               <img class="searching" src="./img/character/emotions/searching.png">
+              <img class="searching-for" src="./img/character/emotions/searching/unknown.png" alt="Unknown">
               <img class="thinking" src="./img/character/emotions/thinking.png">
             </div>
           </div>
@@ -146,7 +147,7 @@ export default {
         path: this.generatePath(gameObjects, visitorConfig.position),
         pathIndex: 0,
         isPaused: true,
-        pauseEndTime: Date.now() + (Math.random() * 4000) + 2000, // Random initial pause 2-6 seconds
+        pauseEndTime: Date.now() + (Math.random() * 6000) + 2000, // Random initial pause 2-8 seconds
       };
     });
 
@@ -208,7 +209,7 @@ export default {
       // Add micro-movements BEFORE the exact waypoint (unless it's the last position)
       if (i < path.length - 1) {
         const nextWaypoint = path[i + 1];
-        const offset = 30 + Math.random() * 40; // 30-70 pixel offset
+        const offset = 150 + Math.random() * 200; // 150-350 pixel offset
         const direction = nextWaypoint > waypoint ? -1 : 1; // Offset opposite to travel direction
         
         // Add 2-3 positions that move back and forth with offset
@@ -266,15 +267,14 @@ export default {
         if (!visitor.found) {
           const rand = Math.random();
           
-          if (rand < 0.6) {
-            // 60% - Silent thinking, no message
-          } else if (rand < 0.8) {
-            // 20% - Generic neutral thinking
-            console.log(`🤔 ${visitor.name} is lost in thought...`);
+          if (rand < 0.1) { // 0.6
+          } else if (rand < 0.1) { // 0.8
+            // Trigger thinking emotion
+            this.triggerEmotion(visitor, 'thinking');
           } else {
-            // 20% - Reveal what they're looking for
+            // Trigger searching emotion
             const searchingFor = visitor.objectOfInterest_possible.name;
-            console.log(`🤔 ${visitor.name} is thinking... "Where could the ${searchingFor} be?"`);
+            this.triggerEmotion(visitor, 'searching', 4000, searchingFor);
           }
         }
         
@@ -374,10 +374,53 @@ export default {
           const coinsEarned = visitor.wealthLevel * objectStage;
           visitor.coinsSpent = coinsEarned;
           
+          // Trigger happy emotion
+          this.triggerEmotion(visitor, 'happy');
+          
           // Console log the discovery
           console.log(`✨ ${visitor.name} found ${possibleObjectName}! Coins dropped: ${coinsEarned}`);
         }
       }
+    }
+  },
+
+  triggerEmotion: function (visitor, emotionState, duration = 4000, searchingFor = null) {
+    // Clear any pending emotion timeout
+    if (visitor.emotionTimeout) {
+      clearTimeout(visitor.emotionTimeout);
+    }
+    
+    // Update visitor's emotion state
+    visitor.emotion = emotionState;
+    
+    // Apply emotion class to the DOM element
+    const element = document.getElementById(visitor.visitorKey);
+    if (!element) return;
+    
+    const emotionElement = element.querySelector('.emotion');
+    if (!emotionElement) return;
+    
+    // Remove all previous emotion classes
+    emotionElement.classList.remove('is--happy', 'is--angry', 'is--thinking', 'is--searching', 'is--alarmed');
+    
+    // Add the new emotion class
+    if (emotionState) {
+      emotionElement.classList.add(`is--${emotionState}`);
+      
+      // Update searching-for image if provided
+      
+      if (emotionState === 'searching' && searchingFor) {
+        const searchingImg = emotionElement.querySelector('.searching-for');
+        if (searchingImg) {
+          searchingImg.src = `./img/character/emotions/searching/${searchingFor}.png`;
+          searchingImg.alt = searchingFor;
+        }
+      }
+      
+      // Schedule emotion clear after duration
+      visitor.emotionTimeout = setTimeout(() => {
+        this.triggerEmotion(visitor, null);
+      }, duration);
     }
   }
 
