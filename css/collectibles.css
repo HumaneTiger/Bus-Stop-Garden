@@ -1,0 +1,28 @@
+#collectibles .coin {
+  position: absolute;
+  z-index: 2;
+  bottom: 0;
+  right: 800px;
+  width: 36px;
+  height: 36px;
+  background-image: url('../img/ui/coin.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  transition: all 0.3s ease-out;
+  animation: rotatingCoin 0.5s linear infinite alternate;
+
+  &.is--collected {
+    animation: initial;
+    transform: scale(0.8);
+    bottom: 583px;
+  }
+}
+
+@keyframes rotatingCoin {
+  0% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0.1);
+  }
+}

@@ -1,6 +1,10 @@
 const characterElem = document.getElementById('character');
 const boundary = 700;
 
+import Visitors from './visitors.js';
+import Props from './props.js';
+import UI from './ui.js';
+
 export default {
 
   walkingState: 'idle', /* also: walking-left, walking-right */
@@ -55,6 +59,8 @@ export default {
         mainCanvas.style.right = (Math.min(mainCanvasRight + 4, 380)) + 'px';
       }
     }
+    // Check for coin collisions
+    this.checkCoinCollisions(characterPosition);
   },
 
   moveLeft: function () {
@@ -74,6 +80,56 @@ export default {
         mainCanvas.style.right = (Math.max(mainCanvasRight - 4, -5700)) + 'px';
       }
     }
+    // Check for coin collisions
+    this.checkCoinCollisions(characterPosition);
   },
+
+  checkCoinCollisions: function (characterPosition) {
+    const tolerance = 50; // collision distance tolerance
+    const coinsToRemove = [];
+    const mainCanvas = document.querySelector('main');
+    const mainCanvasRight = parseInt(mainCanvas.style.right || '0px', 10);
+    
+    Visitors.activeCoins.forEach((coin, index) => {
+      // Check if character position is within tolerance of coin position
+      if (Math.abs(characterPosition - coin.position) <= tolerance) {
+        // Add coin to removal list
+        coinsToRemove.push(index);
+        
+        // Calculate target position: coins fly to center of UI deposit
+        // The relationship: as canvas scrolls (right value changes), target moves inversely
+        // target = -mainCanvasRight + offset, where offset accounts for viewport center
+        const targetRight = -mainCanvasRight + (window.innerWidth / 2);
+        
+        // Trigger collection animation (coin flies to UI center)
+        coin.element.classList.add('is--collected');
+        coin.element.style.right = targetRight + 'px';
+        
+        // After animation completes (300ms), complete the collection
+        setTimeout(() => {
+          // Add to Props coins total
+          const currentCoins = Props.getGameProp('coins');
+          Props.setGameProp('coins', currentCoins + coin.value);
+          
+          // Update UI to reflect new coin total
+          UI.updateCoinsContainer();
+          
+          console.log(`✨ Coin added to total! Total coins: ${Props.getGameProp('coins')}`);
+        }, 300);
+      }
+    });
+    
+    // Remove collected coins from tracking (in reverse order to maintain indices)
+    coinsToRemove.reverse().forEach(index => {
+      const coin = Visitors.activeCoins[index];
+      // Don't remove from DOM yet - let it animate first
+      Visitors.activeCoins.splice(index, 1); // Remove from tracking array
+      
+      // Remove from DOM after animation completes
+      setTimeout(() => {
+        coin.element.remove();
+      }, 300);
+    });
+  }
 
 };

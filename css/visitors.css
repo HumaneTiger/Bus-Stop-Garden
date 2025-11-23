@@ -254,6 +254,14 @@
   &.is--right-facing {
     transform: scaleX(1);
   }
+
+  &.is--elevated {
+    bottom: 38px;
+  }
+
+  &is-hidden {
+    display: none;
+  }
 }
 
 .visitor.is--walking {

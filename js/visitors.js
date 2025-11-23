@@ -3,6 +3,7 @@ import Audio from './audio.js';
 
 const bus = document.getElementById('bus');
 const visitorsContainer = document.getElementById('visitors-container');
+const collectiblesContainer = document.getElementById('collectibles');
 const allVisitors = Props.getVisitors();
 const interestMapping = Props.getInterestsMapping();
 const interestConditions = Props.getInterestConditions();
@@ -13,6 +14,7 @@ const GENERAL_OFFSET = 200; // Applied to all waypoints and micro-movements duri
 export default {
 
   activeVisitorGroup: [],
+  activeCoins: [], // Track all spawned coins for collision detection
 
   init: function () {
     this.initVisitors();
@@ -36,7 +38,7 @@ export default {
   createAllVisitors: function () {
     Object.keys(allVisitors).forEach((visitorKey, index) => {
       const visitor = Props.getVisitor(visitorKey);
-      visitorsContainer.innerHTML += `<div class="visitor is--left-facing" id="${visitorKey}" style="right: ${visitor.position}px">
+      visitorsContainer.innerHTML += `<div class="visitor is--left-facing is--hidden" id="${visitorKey}" style="right: ${visitor.position}px">
           <div class="body">
             <div class="arm"></div>
           </div>
@@ -64,10 +66,75 @@ export default {
     Audio.sfx('bus-arrival', 400);
     Audio.sfx('bus-beep-beep', 6400);
     bus.classList.add('is--arriving', 'is--driving');
+    
+    // Show only selected visitors, hide the rest
+    const selectedVisitorKeys = this.activeVisitorGroup.map(v => v.visitorKey);
+    Object.keys(allVisitors).forEach(visitorKey => {
+      const element = document.getElementById(visitorKey);
+      if (element) {
+        if (selectedVisitorKeys.includes(visitorKey)) {
+          element.classList.remove('is--hidden');
+        } else {
+          element.classList.add('is--hidden');
+        }
+      }
+    });
+    
+    // Store initial positions for entrance animation
+    this.activeVisitorGroup.forEach(visitor => {
+      visitor.entranceStartPosition = visitor.position;
+      visitor.mode = 'exploring'; // Start in exploring mode
+    });
+
+    this.updateVisitorEntrance();
+    
+    // Animate visitors following the bus during arrival (6000ms)
+    const entranceAnimationInterval = setInterval(() => {
+      this.updateVisitorEntrance();
+    }, 30); // Update every 30ms to match movement loop
+    
     setTimeout(() => {
       bus.classList.replace('is--arriving', 'is--parked');
       bus.classList.remove('is--driving');
+      clearInterval(entranceAnimationInterval);
     }, 6000);
+    
+    // Schedule recall after X minutes
+    setTimeout(() => {
+      this.recallVisitors();
+    }, 1 * 60000); /* always keep 60000 as a reference for 1 minute */
+  },
+
+  recallVisitors: function () {
+    // Bus honks and visitors get alarmed
+    Audio.sfx('bus-beep-beep', 0);
+    
+    console.log(`🚌 BUS HONK! All visitors heading back to the bus!`);
+    
+    this.activeVisitorGroup.forEach(visitor => {
+      // Set mode to returning
+      visitor.mode = 'returning';
+      // Increase speed for running
+      visitor.speed = 4; // Double speed
+      // Trigger alarmed emotion for 8 seconds (double duration)
+      this.triggerEmotion(visitor, 'alarmed', 8000);
+    });
+  },
+
+  updateVisitorEntrance: function () {
+    // Get current bus position from computed styles
+    const busComputedStyle = window.getComputedStyle(bus);
+    const busCurrentRight = parseFloat(busComputedStyle.right) || 0;
+    
+    // Visitors follow the bus position directly
+    // insideBusOffset shifts them inside the bus window
+    const insideBusOffset = -270;
+    
+    this.activeVisitorGroup.forEach(visitor => {
+      visitor.position = visitor.entranceStartPosition + busCurrentRight + insideBusOffset;
+    });
+    
+    this.renderVisitors();
   },
 
   createActiveVisitorGroup: function () {
@@ -147,7 +214,7 @@ export default {
         path: this.generatePath(gameObjects, visitorConfig.position),
         pathIndex: 0,
         isPaused: true,
-        pauseEndTime: Date.now() + (Math.random() * 6000) + 2000, // Random initial pause 2-8 seconds
+        pauseEndTime: Date.now() + (Math.random() * 6000) + 6500, // Random initial pause 6.5-12.5 seconds
       };
     });
 
@@ -232,6 +299,34 @@ export default {
 
   updateVisitorMovement: function () {
     this.activeVisitorGroup.forEach(visitor => {
+      // Handle returning mode - direct path back to bus station
+      if (visitor.mode === 'returning') {
+        const currentPos = visitor.position;
+        const targetPos = visitor.entranceStartPosition;
+        const speed = visitor.speed || 4; // Use custom speed if set (for running)
+        const tolerance = 5;
+        
+        // Check if reached starting position (bus station)
+        if (Math.abs(currentPos - targetPos) <= tolerance) {
+          visitor.position = targetPos; // Snap to exact position
+          visitor.isPaused = true; // Stop moving
+          visitor.direction = 'right';
+          return; // Stay at bus station
+        }
+        
+        // Move toward bus station
+        visitor.isPaused = false; // Always moving when returning
+        if (currentPos > targetPos) {
+          visitor.position -= speed;
+          visitor.direction = 'left'; // moving left toward bus
+        } else {
+          visitor.position += speed;
+          visitor.direction = 'right'; // moving right toward bus
+        }
+        return; // Skip normal pathfinding for returning visitors
+      }
+      
+      // Normal exploration mode
       // Skip if no path or path complete
       if (!visitor.path || visitor.pathIndex >= visitor.path.length) {
         return;
@@ -267,8 +362,8 @@ export default {
         if (!visitor.found) {
           const rand = Math.random();
           
-          if (rand < 0.1) { // 0.6
-          } else if (rand < 0.1) { // 0.8
+          if (rand < 0.6) { // 0.6
+          } else if (rand < 0.8) { // 0.8
             // Trigger thinking emotion
             this.triggerEmotion(visitor, 'thinking');
           } else {
@@ -301,6 +396,14 @@ export default {
       // Update position
       element.style.right = visitor.position + 'px';
 
+      // Check if visitor reached the bus station area
+      // If so, move them up into the bus, otherwise reset to default
+      if (visitor.position <= 670) {
+        element.classList.add('is--elevated');
+      } else {
+        element.classList.remove('is--elevated');
+      }
+
       // Update direction
       if (visitor.direction === 'left') {
         element.classList.remove('is--left-facing');
@@ -317,6 +420,13 @@ export default {
         element.classList.add('is--walking');
       }
     });
+    
+    // Check if all visitors are back at their starting positions (bus boarded)
+    if (this.activeVisitorGroup.length > 0 && this.activeVisitorGroup.every(v => v.mode === 'returning' && v.isPaused && v.position <= 670)) {
+      console.log(`✨ All visitors boarded! Bus ready to depart.`);
+      // TODO: Trigger bus departure
+      // add another delay to give everyone a chance to reach their seating position
+    }
   },
 
   checkCollision: function (visitor, position) {
@@ -374,6 +484,9 @@ export default {
           const coinsEarned = visitor.wealthLevel * objectStage;
           visitor.coinsSpent = coinsEarned;
           
+          // Spawn coins around visitor position
+          this.spawnCoins(visitor.position, coinsEarned);
+          
           // Trigger happy emotion
           this.triggerEmotion(visitor, 'happy');
           
@@ -381,6 +494,35 @@ export default {
           console.log(`✨ ${visitor.name} found ${possibleObjectName}! Coins dropped: ${coinsEarned}`);
         }
       }
+    }
+  },
+
+  spawnCoins: function (visitorPosition, coinsEarned) {
+    // Create coin elements scattered around visitor position (horizontally)
+    for (let i = 0; i < coinsEarned; i++) {
+      // Random horizontal offset around visitor
+      const offset = (Math.random() - 0.5) * 200; // -100 to +100px offset
+      const coinRight = visitorPosition - 150 + offset;
+      
+      // Create coin element
+      const coinElement = document.createElement('div');
+      coinElement.className = 'coin';
+      coinElement.style.right = coinRight + 'px';
+      
+      // Create coin data object for tracking
+      const coinData = {
+        element: coinElement,
+        position: coinRight,
+        value: 1 // Each coin is worth 1
+      };
+      
+      // Track in active coins array
+      this.activeCoins.push(coinData);
+      
+      // Add to DOM
+      collectiblesContainer.appendChild(coinElement);
+      
+      console.log(`💰 Coin spawned at right: ${Math.round(coinRight)}px`);
     }
   },
 
