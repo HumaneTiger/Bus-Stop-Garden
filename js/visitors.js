@@ -117,7 +117,7 @@ export default {
       // Increase speed for running
       visitor.speed = 4; // Double speed
       // Trigger alarmed emotion for 8 seconds (double duration)
-      this.triggerEmotion(visitor, 'alarmed', 8000);
+      this.triggerEmotion(visitor, 'alarmed', 6000);
     });
   },
 
@@ -214,7 +214,7 @@ export default {
         path: this.generatePath(gameObjects, visitorConfig.position),
         pathIndex: 0,
         isPaused: true,
-        pauseEndTime: Date.now() + (Math.random() * 6000) + 6500, // Random initial pause 6.5-12.5 seconds
+        pauseEndTime: Date.now() + (Math.random() * 6000) + 6500, // Random initial pause
       };
     });
 
@@ -404,8 +404,8 @@ export default {
         element.classList.remove('is--elevated');
       }
 
-      // Update direction
-      if (visitor.direction === 'left') {
+      // Update direction (skip during departing mode to maintain facing direction)
+      if (visitor.direction === 'left' || visitor.mode === 'departing') {
         element.classList.remove('is--left-facing');
         element.classList.add('is--right-facing');
       } else if (visitor.direction === 'right') {
@@ -413,8 +413,8 @@ export default {
         element.classList.add('is--left-facing');
       }
 
-      // Add/remove walking animation class based on pause state
-      if (visitor.isPaused) {
+      // Add/remove walking animation class based on pause state (but never walk during departing)
+      if (visitor.isPaused || visitor.mode === 'departing') {
         element.classList.remove('is--walking');
       } else {
         element.classList.add('is--walking');
@@ -429,6 +429,8 @@ export default {
   },
 
   triggerBusDeparture: function () {
+    // start the engine again
+    Audio.sfx('bus-departure');
     // Add driving animations and reverse transition
     bus.classList.add('is--driving');
     bus.classList.add('is--leaving');
@@ -439,7 +441,7 @@ export default {
     this.activeVisitorGroup.forEach(visitor => {
       visitor.mode = 'departing';
       visitor.isPaused = true; // they are seated
-      visitor.direction = 'right';
+      visitor.direction = 'left';
     });
     
     // Sync visitors with bus during departure (6000ms)
@@ -474,7 +476,7 @@ export default {
     
     // Visitors follow the bus position during departure
     // Use same offset as arrival for consistency
-    const insideBusOffset = -270;
+    const insideBusOffset = -250;
     
     this.activeVisitorGroup.forEach(visitor => {
       visitor.position = visitor.entranceStartPosition + busCurrentRight + insideBusOffset;
