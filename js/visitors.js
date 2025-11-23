@@ -102,7 +102,7 @@ export default {
     // Schedule recall after X minutes
     setTimeout(() => {
       this.recallVisitors();
-    }, 1 * 60000); /* always keep 60000 as a reference for 1 minute */
+    }, 0.3 * 60000); /* always keep 60000 as a reference for 1 minute */
   },
 
   recallVisitors: function () {
@@ -424,9 +424,63 @@ export default {
     // Check if all visitors are back at their starting positions (bus boarded)
     if (this.activeVisitorGroup.length > 0 && this.activeVisitorGroup.every(v => v.mode === 'returning' && v.isPaused && v.position <= 670)) {
       console.log(`✨ All visitors boarded! Bus ready to depart.`);
-      // TODO: Trigger bus departure
-      // add another delay to give everyone a chance to reach their seating position
+      this.triggerBusDeparture();
     }
+  },
+
+  triggerBusDeparture: function () {
+    // Add driving animations and reverse transition
+    bus.classList.add('is--driving');
+    bus.classList.add('is--leaving');
+    
+    console.log(`🚌 Bus departing! Visitors heading back off-screen...`);
+    
+    // Set all visitors to departure mode
+    this.activeVisitorGroup.forEach(visitor => {
+      visitor.mode = 'departing';
+      visitor.isPaused = true; // they are seated
+      visitor.direction = 'right';
+    });
+    
+    // Sync visitors with bus during departure (6000ms)
+    const departureAnimationInterval = setInterval(() => {
+      this.updateVisitorDeparture();
+    }, 30); // Update every 30ms to match movement loop
+    
+    setTimeout(() => {
+      // Bus has left, hide all visitors and clear group
+      this.activeVisitorGroup.forEach(visitor => {
+        const element = document.getElementById(visitor.visitorKey);
+        if (element) {
+          element.classList.add('is--hidden');
+        }
+      });
+      this.activeVisitorGroup = [];
+      
+      // Reset bus
+      bus.classList.remove('is--driving');
+      bus.classList.remove('is--leaving');
+      bus.classList.remove('is--parked');
+      
+      console.log(`👋 Bus has left! Visitors are gone.`);
+      clearInterval(departureAnimationInterval);
+    }, 6000);
+  },
+
+  updateVisitorDeparture: function () {
+    // Get current bus position from computed styles
+    const busComputedStyle = window.getComputedStyle(bus);
+    const busCurrentRight = parseFloat(busComputedStyle.right) || 0;
+    
+    // Visitors follow the bus position during departure
+    // Use same offset as arrival for consistency
+    const insideBusOffset = -270;
+    
+    this.activeVisitorGroup.forEach(visitor => {
+      visitor.position = visitor.entranceStartPosition + busCurrentRight + insideBusOffset;
+    });
+    
+    this.renderVisitors();
   },
 
   checkCollision: function (visitor, position) {
