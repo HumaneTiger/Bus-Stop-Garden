@@ -163,6 +163,10 @@ main {
   background-image: url(../img/ui/coin-slot.png);
 }
 
+.object .coin-slots .coin-slot.too-expensive {
+  background-image: url(../img/ui/coin-slot-too-expensive.png);
+}
+
 .object .coin-slots .coin-slot.paid {
   background-image: url(../img/ui/coin.png);
   transform: scale(0);

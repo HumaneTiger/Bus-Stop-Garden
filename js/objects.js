@@ -1,4 +1,5 @@
 import Props from './props.js';
+import Audio from './audio.js';
 import UI from './ui.js';
 
 export default {
@@ -64,6 +65,7 @@ export default {
       }
       // add coin slots for stage upgrade price     
       const slotContainerCoinSlots = document.getElementById(objKey).querySelector('.coin-slots');
+      const playerCoins = Props.getGameProp('coins');
       for (let i = 0; i < obj.stageCosts[obj.stage - 1]; i++) {
         const coinSlot = document.createElement('div');
         coinSlot.classList.add('coin-slot', 'unpaid');
@@ -91,6 +93,17 @@ export default {
           const colliderObject = document.getElementById(objKey);
           colliderObject.classList.add('active');
           colliderObject.querySelector(`.preview.stage-${obj.stage}`)?.classList.add('is--visible');
+          
+          // Update too-expensive class on coin slots based on current coin count
+          const playerCoins = Props.getGameProp('coins');
+          const coinSlots = colliderObject.querySelector('.coin-slots').querySelectorAll('.coin-slot');
+          coinSlots.forEach((slot, index) => {
+            if (index >= playerCoins) {
+              slot.classList.add('too-expensive');
+            } else {
+              slot.classList.remove('too-expensive');
+            }
+          });
         }
       } else if (this.activeObjectState !== 'paying') {
         // when player is NOT colliding with this object (implicit)
@@ -104,9 +117,21 @@ export default {
     if (!anyActive) {
       this.activeObject = null;
     }
+    // Check for bus call hint
+    this.checkForBusCallHint(characterPosition);
   },
 
-    sleep: function (ms) {
+  checkForBusCallHint(characterPosition) {
+    if (Props.getGameProp('tutorialDone')) {
+      if (characterPosition >= 760 && characterPosition <= 860) {
+        document.getElementById('bus-key').classList.add('show');
+      } else {
+        document.getElementById('bus-key').classList.remove('show');
+      }
+    }
+  },
+
+  sleep: function (ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   },
 
@@ -134,6 +159,7 @@ export default {
         Props.setGameProp('coins', Props.getGameProp('coins') - 1);
         firstCoin.style.width = '0';
         firstUnpaidSlot.style.transform = 'scale(0)';
+        Audio.sfx('clang', 0, 0.7);
         await this.sleep(300);
         UI.updateCoinsContainer();
         firstUnpaidSlot.classList.replace('unpaid', 'paid');

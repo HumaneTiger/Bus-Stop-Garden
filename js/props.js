@@ -1,7 +1,9 @@
 var game = {
-  coins: 30,
+  coins: 15,
   characterPosition: 760,
   gamePaused: false,
+  tutorialDone: false,
+  busPresent: false,
 };
 
 const plants = [1, 1.7, 2.4, 3.1, 3.8, 4.5, 5.2, 5.9, 6.6, 7.3, 8, 8.7, 9.4, 10.1];
@@ -58,23 +60,23 @@ var gameObjects = {
     zIndex: 1,
     touched: false,
   },
-  "garden-shed": {
+  orchard: {
     position: 2000,
+    stage: 1,
+    maxStages: 3,
+    plants: [...plants],
+    stageCosts: [3, 4, 5],
+    rubble: 5,
+    zIndex: 1,
+    touched: false,
+  },
+  "garden-shed": {
+    position: 2400,
     stage: 1,
     maxStages: 3,
     plants: [...plants],
     stageCosts: [6, 4, 3],
     rubble: 3,
-    zIndex: 1,
-    touched: false,
-  },
-  orchard: {
-    position: 2400,
-    stage: 1,
-    maxStages: 3,
-    plants: [...plants],
-    stageCosts: [8, 5, 4],
-    rubble: 2,
     zIndex: 1,
     touched: false,
   },

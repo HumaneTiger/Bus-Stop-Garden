@@ -8,99 +8,140 @@ import Visitors from './visitors.js';
 import Ui from './ui.js';
 import Audio from './audio.js';
 
-let startHour = 7; // 7
-let ticksPerHour = 6; // 6
-let tickInterval = 100;
-let tickCurrent = 0;
+// Centralized module registry - add new modules here
+const GAME_MODULES = [Props, Audio, Objects, Controls, Character, Interactions, Ui, Plants, Visitors];
 
-window.timeIsUnity = {
-  gameTick: 0,
-  gameHours: 24 + startHour,
-  gameDays: 1, // 1
-  todayHours: startHour,
-  todayTime: `0${startHour}:00`,
-};
+// Image preloading with progress tracking
+async function preloadImages(imagePaths, onProgress) {
+  let loaded = 0;
+  const total = imagePaths.length;
 
-// initialize everything
-{
-  Props.init();
-  Audio.init();
-  Objects.init();
-  Controls.init();
-  Character.init();
-  Interactions.init();
-  Ui.init();
-  Plants.init();
-  Visitors.init();
-  bind();
-  initiateMainGameLoop();
+  const isLoadingContainer = document.getElementById('startscreen').querySelector('.is--loading');
+  isLoadingContainer.style.opacity = '1';
+
+  const results = await Promise.allSettled(
+    imagePaths.map(
+      (path) =>
+        new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => {
+            loaded++;
+            const progress = total > 0 ? loaded / total : 1;
+            onProgress?.(progress, loaded, total);
+            resolve(img);
+          };
+          img.onerror = () => {
+            loaded++;
+            const progress = total > 0 ? loaded / total : 1;
+            onProgress?.(progress, loaded, total);
+            reject(new Error(`Failed to load: ${path}`));
+          };
+          img.src = path;
+        })
+    )
+  );
+
+  return results;
 }
 
-function bind() {
-  /*
-  new Binding({
-    object: window.timeIsUnity,
-    property: 'gameDays',
-    element: document.getElementById('gametime-days'),
-  });
-  new Binding({
-    object: window.timeIsUnity,
-    property: 'todayTime',
-    element: document.getElementById('gametime-hours'),
-  });
-  */
-}
+async function initializeGame() {
+  // List all images to preload
+  // Organize by priority: critical first, deferred later
+  const criticalImages = [
+    './img/scene/clouds.png',
+    './img/scene/fg.png',
+    './img/scene/ground.png',
+    './img/objects/rubble-1.png',
+    './img/objects/rubble-2.png',
+    './img/objects/rubble-3.png',
+    './img/objects/rubble-4.png',
+    './img/objects/rubble-5.png',
+    './img/objects/thicket-1.png',
+    './img/objects/thicket-2.png',
+    './img/objects/thicket-3.png',
+    './img/objects/thicket-front.png',
+    './img/objects/grass-back.png',
+    './img/objects/grass-front.png',
+    './img/ui/coin.png',
+    './img/ui/coin-slot.png',
+    './img/ui/tutorial-a-d.png',
+    './img/ui/tutorial-e.png',
+    './img/character/hero-front.png',
+    './img/character/hero-side.png',
+    './img/character/walking-legs.png',
+    './img/bus/body.png',
+    './img/bus/wheel.png',
+  ];
 
-function triggerGameTick() {
-  window.timeIsUnity.gameTick += 1;
+  const deferredImages = [
+    // here go deferred, less important images
+  ];
 
-  /* TICKY TASKS */
-  if (window.timeIsUnity.gameTick % ticksPerHour === 0) {
-    window.timeIsUnity.gameHours += 1;
+  try {
+    // SYNC PROGRESS: Update any element with id="loading-progress"
+    // The onProgress callback receives (progress: 0-1, loaded: number, total: number)
+    // Example: <div id="loading-progress" style="width: 0%"></div>
+    const onProgress = (progress, loaded, total) => {
+      const progressElement = document.getElementById('loading-progress');
+      if (progressElement) {
+        progressElement.style.width = `${progress * 100}%`;
+      }
+      window.setTimeout(() => {
+        const textElement = document.getElementById('loading-text');
+        if (textElement) {
+          textElement.textContent = `Loading... ${Math.round(progress * 100)}%`;
+        }
+      }, 1);
+    };
 
-    /* HOURLY TASKS */
-    /* order matters */
-    Props.hourlyTasks(window.timeIsUnity.todayHours);
-    Ui.hourlyTasks(window.timeIsUnity.todayHours);
-    Cards.hourlyTasks(window.timeIsUnity.todayHours);
+    // Preload critical images first
+    await preloadImages(criticalImages, onProgress);
 
-    //Day.updateBrightness(timeIsUnity.todayHours);
+    // Critical images loaded, proceed to initialize game
+    startGame();
 
-    if (window.timeIsUnity.gameHours % 24 === 0) {
-      window.timeIsUnity.gameDays += 1;
+    // Initialize all game modules
+    GAME_MODULES.forEach((module) => module.init());
 
-      /* DAILY TASKS */
-      Ui.dailyTasks(window.timeIsUnity.gameDays);
+    window.setTimeout(() => {
+      document.getElementById('startscreen').classList.add('loaded');
+    }, 1000); // Delay to allow users to see the loaded state
+
+    // Background load deferred images
+    if (deferredImages.length > 0) {
+      preloadImages(deferredImages, onProgress).catch(console.error);
     }
+  } catch (error) {
+    console.error('Critical image preload failed:', error);
+    // Fallback: initialize anyway
+    GAME_MODULES.forEach((module) => module.init());
   }
-
-  window.timeIsUnity.todayHours = window.timeIsUnity.gameHours - window.timeIsUnity.gameDays * 24;
-  window.timeIsUnity.todayTime =
-    window.timeIsUnity.todayHours < 10
-      ? '0' + window.timeIsUnity.todayHours + ':'
-      : window.timeIsUnity.todayHours + ':';
-  window.timeIsUnity.todayTime += (window.timeIsUnity.gameTick % 6) + '0';
 }
 
-function initiateMainGameLoop() {
-  window.setTimeout(() => {
-    /* go foreward in time */
-    tickCurrent += tickInterval;
+// Start the game after a delay to allow CSS background images to load naturally
+const PRELOAD_DELAY_MS = 500; // Adjust this value based on your needs
+window.setTimeout(() => {
+  initializeGame();
+}, PRELOAD_DELAY_MS);
 
-    if (!Props.getGameProp('gamePaused')) {
-      initiateMainGameLoop();
-    } else {
-      idleLoop();
-    }
-  }, tickInterval);
+function startGame() {
+  const startscreen = document.getElementById('startscreen');
+  if (startscreen) {
+    startscreen.classList.add('starting');
+    // Start ambient music loop
+    Audio.music('ambient-1', 0, 0.5);
+    window.setTimeout(() => {
+      startscreen.remove();
+    }, 2000);
+  }
 }
 
-function idleLoop() {
-  window.setTimeout(() => {
-    if (!Props.getGameProp('gamePaused')) {
-      initiateMainGameLoop();
-    } else {
-      idleLoop();
-    }
-  }, 500);
-}
+// Handle start button click
+document.addEventListener('DOMContentLoaded', () => {
+  const startButton = document.getElementById('start-button');
+  if (startButton) {
+    startButton.addEventListener('click', () => {
+      startGame();
+    });
+  }
+});

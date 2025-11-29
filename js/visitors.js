@@ -63,7 +63,7 @@ export default {
     this.activeVisitorGroup = this.createActiveVisitorGroup();
     console.log(this.activeVisitorGroup); // I will check this next
 
-    Audio.sfx('bus-arrival', 400);
+    Audio.sfx('bus-arrival', 400, 0.6);
     Audio.sfx('bus-beep-beep', 6400);
     bus.classList.add('is--arriving', 'is--driving');
     
@@ -102,7 +102,7 @@ export default {
     // Schedule recall after X minutes
     setTimeout(() => {
       this.recallVisitors();
-    }, 0.3 * 60000); /* always keep 60000 as a reference for 1 minute */
+    }, 1 * 60000); /* always keep 60000 as a reference for 1 minute */
   },
 
   recallVisitors: function () {
@@ -363,7 +363,7 @@ export default {
           const rand = Math.random();
           
           if (rand < 0.6) { // 0.6
-          } else if (rand < 0.8) { // 0.8
+          } else if (rand < 0.75) { // 0.8
             // Trigger thinking emotion
             this.triggerEmotion(visitor, 'thinking');
           } else {
