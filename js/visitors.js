@@ -66,7 +66,6 @@ export default {
 
     this.activeVisitorGroup = this.createActiveVisitorGroup();
     this.busVisitCount++;
-    console.log(this.activeVisitorGroup); // I will check this next
 
     Audio.sfx('bus-arrival', 400, 0.6);
     Audio.sfx('bus-beep-beep', 6400);
@@ -89,6 +88,7 @@ export default {
     this.activeVisitorGroup.forEach(visitor => {
       visitor.entranceStartPosition = visitor.position;
       visitor.mode = 'exploring'; // Start in exploring mode
+      visitor.direction = Math.random() > 0.75 ? 'left' : 'right';
     });
 
     this.updateVisitorEntrance();
@@ -109,8 +109,12 @@ export default {
       this.recallVisitors();
     }, this.recallScheduleTime);
     
-    // Increase recall schedule for next bus arrival by 15 seconds
-    this.recallScheduleTime += 10000;
+    // Increase recall schedule for next bus arrival
+    if (Props.getGameObject('temple')?.stage >= 2 || Props.getGameObject('bench')?.stage >= 2) {
+      this.recallScheduleTime = 240000;
+    } else {
+      this.recallScheduleTime += 10000;
+    }
   },
 
   recallVisitors: function () {
@@ -264,8 +268,8 @@ export default {
     while (currentIndex < objectsByPosition.length) {
       path.push(objectsByPosition[currentIndex].position);
       
-      // Chance to wander back one position to the right (30% chance)
-      if (currentIndex > 0 && Math.random() < 0.3) {
+      // Chance to wander back one position to the right (15% chance)
+      if (currentIndex > 0 && Math.random() < 0.15) {
         // Walk back to the previous object
         const wanderBackIndex = currentIndex - 1;
         path.push(objectsByPosition[wanderBackIndex].position);

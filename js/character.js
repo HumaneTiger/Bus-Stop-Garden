@@ -39,15 +39,16 @@ export default {
       const stoneGhost = document.getElementById('stone-ghost');
       const characterPosition = this.getCharacterPosition();
       
-      // Spawn stone ghost 150px away from character (random direction)
+      // Spawn stone ghost 100px away from character (random direction)
       const spawnDirection = Math.random() > 0.5 ? 1 : -1;
-      const initialPosition = characterPosition + (150 * spawnDirection);
+      const initialPosition = characterPosition + (100 * spawnDirection);
       stoneGhost.style.right = initialPosition + 'px';
       stoneGhost.style.opacity = '1';
       
       // Determine random direction for movement (left or right)
+      // Max travel distance: 300px total
       const moveDirection = Math.random() > 0.5 ? 1 : -1;
-      const moveDistance = 300 * moveDirection;
+      const moveDistance = 200 * moveDirection;
       
       // Move the stone ghost
       setTimeout(() => {
@@ -197,6 +198,26 @@ export default {
       if (matchingComment.sfx) {
         Audio.sfx(matchingComment.sfx);
       }
+    }
+
+    // go through all game objects
+    // check if all stages of all objects are equal to their max stage
+    const gameObjects = Props.getGameObjects();
+    let allMaxed = true;
+    for (const objKey in gameObjects) {
+      const obj = gameObjects[objKey];
+      if (obj.stage <= obj.maxStages) {
+        allMaxed = false;
+        break;
+      }
+    }
+    // if all are maxed, trigger special speech
+    if (allMaxed) {
+      this.saySomething('The farm looks better than ever!');
+      window.setTimeout(() => {
+        this.saySomething('I think Grandpa would be proud.');
+      }, 3500);
+      Audio.sfx('success', 0, 0.5);
     }
   },
 };

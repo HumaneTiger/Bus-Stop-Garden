@@ -208,6 +208,7 @@ export default {
 
   async triggerUpdateForAllObjects() {
     const allObjects = Props.getGameObjects();
+    console.log(allObjects);
     for (const objKey in allObjects) {
       const obj = allObjects[objKey];
       const objectElement = document.getElementById(objKey);
