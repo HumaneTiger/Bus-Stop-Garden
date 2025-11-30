@@ -12,6 +12,7 @@ export default {
 
   init: function () {
     this.initWalkingAnimation();
+    this.initStoneGhostWalkingInterval();
   },
 
   initWalkingAnimation: function () {
@@ -26,6 +27,38 @@ export default {
         characterElem.querySelector('.legs').style.backgroundPosition = frames[0] + 'px 0';
       }
     }, 1000/30);
+  },
+
+  initStoneGhostWalkingInterval: function () {
+    setInterval(() => {
+
+      const templeProps = Props.getGameObject('temple');
+      
+      if (!templeProps || templeProps.stage < 2) return;
+
+      const stoneGhost = document.getElementById('stone-ghost');
+      const characterPosition = this.getCharacterPosition();
+      
+      // Spawn stone ghost 150px away from character (random direction)
+      const spawnDirection = Math.random() > 0.5 ? 1 : -1;
+      const initialPosition = characterPosition + (150 * spawnDirection);
+      stoneGhost.style.right = initialPosition + 'px';
+      stoneGhost.style.opacity = '1';
+      
+      // Determine random direction for movement (left or right)
+      const moveDirection = Math.random() > 0.5 ? 1 : -1;
+      const moveDistance = 300 * moveDirection;
+      
+      // Move the stone ghost
+      setTimeout(() => {
+        stoneGhost.style.right = (initialPosition + moveDistance) + 'px';
+      }, 50);
+      
+      // Fade out after 12 seconds
+      setTimeout(() => {
+        stoneGhost.style.opacity = '0';
+      }, 8000);
+    }, 30000);
   },
 
   getCharacterPosition: function () {
@@ -150,7 +183,7 @@ export default {
     if (!objectProps) return;
 
     const currentStage = objectProps.stage;
-    console.log(objectProps);
+    
     // Find a comment that matches this object and stage
     const comments = Props.getComments();
     const matchingComment = comments.find(

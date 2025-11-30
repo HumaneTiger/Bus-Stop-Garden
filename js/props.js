@@ -109,6 +109,11 @@ var comments = [
     text: 'This should help visitors find us.',
   },
   {
+    object: 'bus-station',
+    stage: 2,
+    text: 'A place to sit. Much better!',
+  },
+  {
     object: 'house',
     stage: 1,
     text: 'Home sweet home.',

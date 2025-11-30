@@ -51,7 +51,7 @@
   opacity: 0;
   width: 200px;
   height: 75px;
-  padding: 6px 18px 6px 35px;
+  padding: 4px 18px 6px 35px;
   background: url(../img/character/speech-bubble.png) no-repeat;
   background-size: contain;
   z-index: 10;
@@ -105,6 +105,35 @@
 
   .speech-bubble {
     left: 67px;
+  }
+}
+
+.stone-ghost {
+  position: absolute;
+  bottom: 0;
+  opacity: 0;
+  width: 87px;
+  height: 60px;
+  background-image: url(../img/character/stone-ghost.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  right: 1000px;
+  z-index: 2;
+  pointer-events: none;
+  animation: squeeze 1.5s ease-in infinite;
+  transform-origin: center bottom;
+  transition: opacity 4s ease-in, right 12s linear;
+}
+
+@keyframes squeeze {
+  0% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.9);
+  }
+  100% {
+    transform: scaleY(1);
   }
 }
 

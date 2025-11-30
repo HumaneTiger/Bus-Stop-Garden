@@ -147,8 +147,8 @@ export default {
 
   createActiveVisitorGroup: function () {
 
-    // Random group size: 2-4 visitors for testing
-    let groupSize = Math.floor(Math.random() * 3) + 2;
+    // Random group size: 3-4 visitors
+    let groupSize = Math.floor(Math.random() * 2) + 3;
     
     // Add 2 more guaranteed visitors if billboard is upgraded to stage 2+
     const billboard = Props.getGameObject('billboard');
@@ -489,6 +489,8 @@ export default {
       console.log(`👋 Bus has left! Visitors are gone.`);
 
       Props.setGameProp('busPresent', false);
+      const busKeyElement = document.getElementById('bus-key');
+      busKeyElement.classList.remove('not--possible');
       
       clearInterval(departureAnimationInterval);
     }, 6000);
