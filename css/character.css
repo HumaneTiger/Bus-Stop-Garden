@@ -43,8 +43,44 @@
   animation: arm-swing 0.7s linear infinite;
 }
 
+#character .speech-bubble {
+  position: absolute;
+  top: -31px;
+  left: 77px;
+  pointer-events: none;
+  opacity: 0;
+  width: 200px;
+  height: 75px;
+  padding: 6px 18px 6px 35px;
+  background: url(../img/character/speech-bubble.png) no-repeat;
+  background-size: contain;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: opacity 0.5s ease-out;
+
+  .bubble-text {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.3em;
+
+    &::before {
+      content: '“';
+    }
+    &::after {
+      content: '”';
+    }
+  }
+}
+
 #character.walking-left {
   transform: scaleX(-1);
+
+  .bubble-text {
+    transform: scaleX(-1);
+  }
 }
 
 #character.idle .body {
@@ -65,6 +101,10 @@
 
   .arm {
     display: block;
+  }
+
+  .speech-bubble {
+    left: 67px;
   }
 }
 

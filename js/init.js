@@ -127,11 +127,22 @@ window.setTimeout(() => {
 function startGame() {
   const startscreen = document.getElementById('startscreen');
   if (startscreen) {
+    // Request fullscreen mode
+    const docElement = document.documentElement;
+    if (docElement.requestFullscreen) {
+      docElement.requestFullscreen().catch(err => {
+        console.warn('Fullscreen request failed:', err);
+      });
+    }
     startscreen.classList.add('starting');
     // Start ambient music loop
     Audio.music('ambient-1', 0, 0.5);
     window.setTimeout(() => {
       startscreen.remove();
+      Character.saySomething('Ah! Grandpa was right, the farm is a mess!', 3500);
+      window.setTimeout(() => {
+        Character.saySomething('I best get to tidying it before visitors arrive.', 3500);
+      }, 4000);
     }, 2000);
   }
 }

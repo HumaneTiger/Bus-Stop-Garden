@@ -4,6 +4,7 @@ const boundary = 700;
 import Visitors from './visitors.js';
 import Props from './props.js';
 import UI from './ui.js';
+import Audio from './audio.js';
 
 export default {
 
@@ -40,6 +41,17 @@ export default {
 
   idle: function () {
     this.changeWalkingState('idle');
+  },
+
+  saySomething: function (text, duration = 3500) {
+    const bubble = characterElem.querySelector('.speech-bubble');
+    const bubbleText = bubble.querySelector('.bubble-text');
+    bubbleText.textContent = text;
+    bubble.style.opacity = '1';
+    // Hide after duration
+    setTimeout(() => {
+      bubble.style.opacity = '0';
+    }, duration);
   },
 
   moveRight: function () {
@@ -130,6 +142,28 @@ export default {
         coin.element.remove();
       }, 300);
     });
-  }
+  },
 
+  speechCheck: function (activeObject) {
+    // Get the active object's current stage
+    const objectProps = Props.getGameObject(activeObject);
+    if (!objectProps) return;
+
+    const currentStage = objectProps.stage;
+    console.log(objectProps);
+    // Find a comment that matches this object and stage
+    const comments = Props.getComments();
+    const matchingComment = comments.find(
+      comment => comment.object === activeObject && comment.stage === currentStage - 1
+    );
+
+    if (matchingComment) {
+      this.saySomething(matchingComment.text);
+      
+      // Play sound effect if present
+      if (matchingComment.sfx) {
+        Audio.sfx(matchingComment.sfx);
+      }
+    }
+  },
 };

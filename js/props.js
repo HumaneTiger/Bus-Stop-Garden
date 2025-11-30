@@ -1,6 +1,6 @@
 var game = {
-  coins: 30, //15,
-  characterPosition: 760,
+  coins: 10,
+  characterPosition: 828,
   gamePaused: false,
   tutorialDone: false,
   busPresent: false,
@@ -102,12 +102,82 @@ var gameObjects = {
   },
 };
 
+var comments = [
+  {
+    object: 'billboard',
+    stage: 2,
+    text: 'This should help visitors find us.',
+  },
+  {
+    object: 'house',
+    stage: 1,
+    text: 'Home sweet home.',
+  },
+  {
+    object: 'house',
+    stage: 2,
+    text: 'Everything’s better with flowers!',
+  },
+  {
+    object: 'barn',
+    stage: 3,
+    text: 'Well hello there, moo cow!',
+    sfx: 'moo',
+  },
+  {
+    object: 'temple',
+    stage: 1,
+    text: 'Ooh, visitors will love this.',
+  },
+  {
+    object: 'temple',
+    stage: 3,
+    text: 'Such a pretty colour!',
+  },
+  {
+    object: 'orchard',
+    stage: 3,
+    text: 'The trees bring nice shade! Good for picnics.',
+  },
+  {
+    object: 'fence',
+    stage: 5,
+    text: 'A windmill! How cool! Great for the farm!',
+  },
+  {
+    object: 'orchard',
+    stage: 6,
+    text: 'Fresh fruits, grown with love and picked with care!',
+  },
+  {
+    object: 'temple',
+    stage: 4,
+    text: 'Garden statues make great friends!',
+  },
+  {
+    object: 'shed',
+    stage: 2,
+    text: 'The soil is healthy, look at how they grow!',
+  },
+  {
+    object: 'bench',
+    stage: 2,
+    text: 'Ahhh, nice to have some shade to relax in.',
+  },
+  {
+    object: 'bench',
+    stage: 3,
+    text: 'Such a beautiful day to fly a kite…',
+  },
+];
+
+
 var visitors = {
   bernard: {
     name: 'Bernard',
     position: 340,
     wealthLevel: 2,
-    interests: ['decoration', 'animals'],
+    interests: ['decoration', 'nature'],
     isVisiting: false,
     objectOfInterest: null,
     mode: 'searching',
@@ -118,7 +188,7 @@ var visitors = {
     name: 'Violet',
     position: 400,
     wealthLevel: 3,
-    interests: ['flowers', 'decoration'],
+    interests: ['flowers', 'comfort'],
     isVisiting: false,
     objectOfInterest: null,
     mode: 'searching',
@@ -129,7 +199,7 @@ var visitors = {
     name: 'Ziggy',
     position: 460,
     wealthLevel: 1,
-    interests: ['animals', 'flowers'],
+    interests: ['food', 'comfort'],
     isVisiting: false,
     objectOfInterest: null,
     mode: 'searching',
@@ -140,7 +210,7 @@ var visitors = {
     name: 'Edgar',
     position: 520,
     wealthLevel: 3,
-    interests: ['peace', 'decoration'],
+    interests: ['peace', 'comfort'],
     isVisiting: false,
     objectOfInterest: null,
     mode: 'searching',
@@ -151,7 +221,7 @@ var visitors = {
     name: 'Cletus',
     position: 580,
     wealthLevel: 1,
-    interests: ['animals', 'nature'],
+    interests: ['nature', 'decoration'],
     isVisiting: false,
     objectOfInterest: null,
     mode: 'searching',
@@ -162,7 +232,7 @@ var visitors = {
     name: 'Hazel',
     position: 640,
     wealthLevel: 2,
-    interests: ['flowers', 'nature'],
+    interests: ['flowers', 'peace'],
     isVisiting: false,
     objectOfInterest: null,
     mode: 'searching',
@@ -173,9 +243,10 @@ var visitors = {
 
 // Maps visitor interest categories to specific objects of interest
 const interestsMapping = {
-  decoration: ['bench', 'potted-flowers', 'windmill', 'garden-gnome', 'deco-boxes', 'kite', 'lantern', 'garden-tools'],
-  flowers: ['sunflower', 'potted-flowers', 'fruit-tree', 'flower-meadow'],
-  peace: ['bench', 'windmill', 'stone-statue', 'cow'],
+  decoration: ['bench', 'windmill', 'garden-gnome', 'stone-statue', 'lantern'],
+  comfort: ['potted-flowers', 'deco-boxes', 'kite', 'garden-tools'],
+  flowers: ['sunflower', 'potted-flowers', 'flower-meadow'],
+  peace: ['bench', 'windmill', 'stone-statue', 'cow', 'temple'],
   nature: ['flower-meadow', 'tree', 'cow'],
   food: ['vegetables', 'fruit-stand'],
 };
@@ -204,6 +275,7 @@ const interestConditions = {
   'vegetables': { objectKey: 'shed', minStage: 2 },
   'bench': { objectKey: 'bench', minStage: 1 },
   'kite': { objectKey: 'bench', minStage: 3 },
+  'temple': { objectKey: 'temple', minStage: 1 },
 };
 
 export default {
@@ -240,6 +312,10 @@ export default {
 
   getInterestConditions: function () {
     return interestConditions;
+  },
+
+  getComments: function () {
+    return comments;
   },
 
   pauseGame: function (pause) {

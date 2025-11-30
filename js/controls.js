@@ -50,6 +50,7 @@ export default {
         await Objects.payPrice(activeObject, objectProps);
         await Objects.triggerFinalPayment(activeObject);
         await Objects.triggerUpdateForAllObjects();
+        Character.speechCheck(activeObject);
       }
     } else if (keyPressed.key === 'b') {
       if (!Props.getGameProp('busPresent')) {
@@ -92,6 +93,7 @@ export default {
           // Check again before showing - if eAgain is now true, don't show it
           if (this.pay && !this.eAgain) {
             document.getElementById('tutorial-e-again').classList.add('show');
+            Character.saySomething('Still have some coins left...');
           }
         }, 5000);
       }
@@ -101,11 +103,16 @@ export default {
           // Check again before showing - if bus is now true, don't show it
           if (this.eAgain && !this.bus) {
             document.getElementById('tutorial-b')?.classList.add('show');
+            Character.saySomething('We’ll need to call the bus now.');
           }
         }, 4000);
       }
       if (this.bus) {
         document.getElementById('tutorial-b').classList.remove('show');
+        Character.saySomething('Let’s wait for visitors.');
+        window.setTimeout(() => {
+          Character.saySomething('Ooh, my first visitors! Hello everyone!');
+        }, 4000);
         Props.setGameProp('tutorialDone', true);
         window.setTimeout(() => {
           document.getElementById('tutorial-a-d').remove();

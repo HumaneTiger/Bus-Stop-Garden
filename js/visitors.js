@@ -15,6 +15,8 @@ export default {
 
   activeVisitorGroup: [],
   activeCoins: [], // Track all spawned coins for collision detection
+  recallScheduleTime: 60000, // Start at 60 seconds (1 minute)
+  busVisitCount: 0, // Track how many times the bus has arrived
 
   init: function () {
     this.initVisitors();
@@ -63,6 +65,7 @@ export default {
     Props.setGameProp('busPresent', true);
 
     this.activeVisitorGroup = this.createActiveVisitorGroup();
+    this.busVisitCount++;
     console.log(this.activeVisitorGroup); // I will check this next
 
     Audio.sfx('bus-arrival', 400, 0.6);
@@ -101,10 +104,13 @@ export default {
       clearInterval(entranceAnimationInterval);
     }, 6000);
     
-    // Schedule recall after X minutes
+    // Schedule recall after dynamic time (increases by 15s each visit)
     setTimeout(() => {
       this.recallVisitors();
-    }, 1 * 60000); /* always keep 60000 as a reference for 1 minute */
+    }, this.recallScheduleTime);
+    
+    // Increase recall schedule for next bus arrival by 15 seconds
+    this.recallScheduleTime += 10000;
   },
 
   recallVisitors: function () {
@@ -142,7 +148,14 @@ export default {
   createActiveVisitorGroup: function () {
 
     // Random group size: 2-4 visitors for testing
-    const groupSize = Math.floor(Math.random() * 3) + 2;
+    let groupSize = Math.floor(Math.random() * 3) + 2;
+    
+    // Add 2 more guaranteed visitors if billboard is upgraded to stage 2+
+    const billboard = Props.getGameObject('billboard');
+    if (billboard && billboard.stage >= 2) {
+      groupSize += 2; // Results in 4-6 visitors
+    }
+    
     const visitorKeys = Object.keys(allVisitors);
     const selectedKeys = [];
     
@@ -155,13 +168,20 @@ export default {
     }
 
     // Create visitor entries
-    const activeGroup = selectedKeys.map(visitorKey => {
+    const activeGroup = selectedKeys.map((visitorKey, index) => {
       const visitorConfig = allVisitors[visitorKey];
       
-      // Pick random interest category from visitor's interests
-      const interestCategory = visitorConfig.interests[
-        Math.floor(Math.random() * visitorConfig.interests.length)
-      ];
+      // For the first bus visit, ensure the first visitor wants a sunflower
+      let interestCategory;
+      if (this.busVisitCount <= 3 && index === 0) {
+        // First visitor on first bus visit always wants flowers
+        interestCategory = 'flowers';
+      } else {
+        // Pick random interest category from visitor's interests
+        interestCategory = visitorConfig.interests[
+          Math.floor(Math.random() * visitorConfig.interests.length)
+        ];
+      }
       
       // Get all possible interests for this category
       const possibleInterests = interestMapping[interestCategory] || [];
@@ -192,7 +212,7 @@ export default {
       const intendedTargetObject = intendedCondition?.objectKey || null;
       
       // Calculate maxCoins based on wealth level
-      const maxCoins = visitorConfig.wealthLevel * 3; // wealth multiplier
+      const maxCoins = visitorConfig.wealthLevel * 2; // wealth multiplier
       
       return {
         visitorKey: visitorKey,
@@ -365,7 +385,7 @@ export default {
           const rand = Math.random();
           
           if (rand < 0.6) { // 0.6
-          } else if (rand < 0.75) { // 0.8
+          } else if (rand < 0.7) { // 0.8
             // Trigger thinking emotion
             this.triggerEmotion(visitor, 'thinking');
           } else {
@@ -542,7 +562,7 @@ export default {
           
           // Calculate coins to drop based on object stage and visitor wealth
           const objectStage = gameObjects[collidedObject].stage;
-          const coinsEarned = visitor.wealthLevel * objectStage;
+          const coinsEarned = Math.floor(visitor.wealthLevel * (objectStage / 2)) + 1;
           visitor.coinsSpent = coinsEarned;
           
           // Spawn coins around visitor position
