@@ -98,7 +98,7 @@ async function initializeGame() {
     await preloadImages(criticalImages, onProgress);
 
     // Critical images loaded, proceed to initialize game
-    startGame();
+    //startGame();
 
     // Initialize all game modules
     GAME_MODULES.forEach((module) => module.init());

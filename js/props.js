@@ -1,5 +1,5 @@
 var game = {
-  coins: 15,
+  coins: 30, //15,
   characterPosition: 760,
   gamePaused: false,
   tutorialDone: false,
@@ -32,10 +32,10 @@ var gameObjects = {
   house: {
     position: 1220,
     stage: 1,
-    maxStages: 2,
+    maxStages: 4,
     plants: [],
-    stageCosts: [9, 5],
-    rubble: 1,
+    stageCosts: [9, 5, 3, 5],
+    rubble: 2,
     zIndex: 1,
     touched: false,
   },
@@ -54,49 +54,49 @@ var gameObjects = {
     stage: 1,
     maxStages: 3,
     specialStage: 3,
-    plants: [1, 1.7, 2.4, 3.1, 3.8, 4.5, 5.2, 7.3, 8, 8.7, 9.4, 10.1], /* leave out position 6 as it covers the cows head */
+    plants: [1, 1.7, 2.4, 3.1, 3.8, 4.5, 5.2, 7.3, 8, 8.7], /* leave out position 6 as it covers the cows head */
     stageCosts: [7, 3, 5],
     rubble: 1,
     zIndex: 1,
     touched: false,
   },
   orchard: {
-    position: 2000,
+    position: 2070,
     stage: 1,
-    maxStages: 3,
+    maxStages: 6,
     plants: [...plants],
-    stageCosts: [3, 4, 5],
+    stageCosts: [3, 4, 5, 3, 4, 7],
     rubble: 5,
     zIndex: 1,
     touched: false,
   },
-  "garden-shed": {
-    position: 2400,
+  shed: {
+    position: 2420,
     stage: 1,
-    maxStages: 3,
+    maxStages: 4,
     plants: [...plants],
-    stageCosts: [6, 4, 3],
+    stageCosts: [5, 4, 3, 2],
     rubble: 3,
     zIndex: 1,
     touched: false,
   },
   temple: {
-    position: 2800,
+    position: 2860,
     stage: 1,
-    maxStages: 3,
+    maxStages: 4,
     plants: [...plants],
-    stageCosts: [7, 3, 3],
+    stageCosts: [8, 3, 3, 5],
     rubble: 2,
-    zIndex: 1,
+    zIndex: 2,
     touched: false,
   },
-  "wildflower-meadow": {
-    position: 3100,
+  bench: {
+    position: 3220,
     stage: 1,
     maxStages: 3,
     plants: [...plants],
     stageCosts: [4, 3, 2],
-    rubble: 1,
+    rubble: 4,
     zIndex: 1,
     touched: false,
   },
@@ -173,12 +173,11 @@ var visitors = {
 
 // Maps visitor interest categories to specific objects of interest
 const interestsMapping = {
-  animals: ['cow', 'dog-house', 'bees-hive'],
-  decoration: ['bench', 'potted-flowers', 'windmill', 'garden-gnome', 'deco-boxes', 'kite', 'scarecrow', 'garden-tools'],
-  flowers: ['sunflower', 'potted-flowers', 'fruit-tree', 'flower-meadow', 'wildflower-meadow'],
-  peace: ['wildflower-meadow', 'bench'],
-  nature: ['flower-meadow', 'fruit-tree', 'water-pump', 'wildflower-meadow', 'orchard'],
-  food: ['vegetables', 'fruit-tree', 'orchard'],
+  decoration: ['bench', 'potted-flowers', 'windmill', 'garden-gnome', 'deco-boxes', 'kite', 'lantern', 'garden-tools'],
+  flowers: ['sunflower', 'potted-flowers', 'fruit-tree', 'flower-meadow'],
+  peace: ['bench', 'windmill', 'stone-statue', 'cow'],
+  nature: ['flower-meadow', 'tree', 'cow'],
+  food: ['vegetables', 'fruit-stand'],
 };
 
 // Defines how to satisfy each object of interest
@@ -190,25 +189,21 @@ const interestConditions = {
     { objectKey: 'fence', minStage: 3 },
     { objectKey: 'house', minStage: 2 }
   ],
+  'tree': [
+    { objectKey: 'orchard', minStage: 2 },
+    { objectKey: 'bench', minStage: 2 }
+  ],
   'windmill': { objectKey: 'fence', minStage: 5 },
   'flower-meadow': { condition: 'anyObjectTouched' },
-  
-  // TODO: Assets ready, waiting for stage assignment
-  'garden-tools': { objectKey: 'garden-shed', minStage: 1, toBeImplemented: true  },
-  'vegetables': { objectKey: 'garden-shed', minStage: 2, toBeImplemented: true  },
-  'stone-statue': { objectKey: 'temple', minStage: 3, toBeImplemented: true  },
-  'wildflower-meadow': { objectKey: 'wildflower-meadow', minStage: 2, toBeImplemented: true  },
-  'bench': { objectKey: 'wildflower-meadow', minStage: 2, toBeImplemented: true },
-  'fruit-tree': { objectKey: 'orchard', minStage: 2, toBeImplemented: true  },
-  'orchard': { objectKey: 'orchard', minStage: 3, toBeImplemented: true  },
-  'dog-house': { objectKey: 'house', minStage: 2, toBeImplemented: true },
-  'bees-hive': { objectKey: 'orchard', minStage: 3, toBeImplemented: true },
-  'water-pump': { objectKey: 'garden-shed', minStage: 4, toBeImplemented: true },
-  'nature-ghost': { objectKey: 'wildflower-meadow', minStage: 2, toBeImplemented: true },
-  'deco-boxes': { objectKey: 'house', minStage: 2, toBeImplemented: true },
-  'garden-gnome': { objectKey: 'garden-shed', minStage: 3, toBeImplemented: true },
-  'kite': { objectKey: 'fence', minStage: 4, toBeImplemented: true },
-  'scarecrow': { objectKey: 'orchard', minStage: 2, toBeImplemented: true },
+  'lantern': { objectKey: 'temple', minStage: 2 },
+  'garden-gnome': { objectKey: 'house', minStage: 4 },
+  'fruit-stand': { objectKey: 'orchard', minStage: 5 },
+  'deco-boxes': { objectKey: 'house', minStage: 3 },
+  'stone-statue': { objectKey: 'temple', minStage: 4 },
+  'garden-tools': { objectKey: 'shed', minStage: 3 },
+  'vegetables': { objectKey: 'shed', minStage: 2 },
+  'bench': { objectKey: 'bench', minStage: 1 },
+  'kite': { objectKey: 'bench', minStage: 3 },
 };
 
 export default {

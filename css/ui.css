@@ -139,12 +139,17 @@
   width: 63px;
   height: 71px;
   background: url(../img/ui/bus-key.png) center center no-repeat;
-  opacity: 1;
+  opacity: 0;
   transition: all 0.5s ease-out;
 
   &.show {
     bottom: 155px;
     opacity: 1;
+  }
+
+  &.not--possible {
+    opacity: 0.3;
+    background: url(../img/ui/no-bus-key.png) center center no-repeat;
   }
 }
 

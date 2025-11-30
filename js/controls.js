@@ -2,6 +2,7 @@ import Props from './props.js';
 import Character from './character.js';
 import Objects from './objects.js';
 import Visitors from './visitors.js';
+import Audio from './audio.js';
 
 // Object to track pressed keys
 const keys = {};
@@ -51,10 +52,14 @@ export default {
         await Objects.triggerUpdateForAllObjects();
       }
     } else if (keyPressed.key === 'b') {
-      // For testing: trigger bus arriving
-      this.bus = true;
-      this.checkTutorial();
-      Visitors.triggerBusArrival();
+      if (!Props.getGameProp('busPresent')) {
+        // For testing: trigger bus arriving
+        this.bus = true;
+        this.checkTutorial();
+        Visitors.triggerBusArrival();
+      } else {
+        Audio.sfx('nope', 0, 0.2);
+      }
     }
   },
 

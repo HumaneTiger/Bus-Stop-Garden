@@ -60,6 +60,8 @@ export default {
 
   triggerBusArrival: function () {
     
+    Props.setGameProp('busPresent', true);
+
     this.activeVisitorGroup = this.createActiveVisitorGroup();
     console.log(this.activeVisitorGroup); // I will check this next
 
@@ -465,6 +467,9 @@ export default {
       bus.classList.remove('is--parked');
       
       console.log(`👋 Bus has left! Visitors are gone.`);
+
+      Props.setGameProp('busPresent', false);
+      
       clearInterval(departureAnimationInterval);
     }, 6000);
   },

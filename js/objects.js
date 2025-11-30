@@ -123,10 +123,16 @@ export default {
 
   checkForBusCallHint(characterPosition) {
     if (Props.getGameProp('tutorialDone')) {
-      if (characterPosition >= 760 && characterPosition <= 860) {
-        document.getElementById('bus-key').classList.add('show');
+      const busKeyElement = document.getElementById('bus-key');
+      if (Props.getGameProp('busPresent')) {
+        busKeyElement.classList.add('not--possible');
       } else {
-        document.getElementById('bus-key').classList.remove('show');
+        busKeyElement.classList.remove('not--possible');
+      }
+      if (characterPosition >= 760 && characterPosition <= 860) {
+        busKeyElement.classList.add('show');
+      } else {
+        busKeyElement.classList.remove('show', 'not--possible');
       }
     }
   },
